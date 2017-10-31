@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block link %}
+
+{% load static %}
+<link href="{% static 'css/cover.css' %}" rel="stylesheet">
+<link href="{% static 'css/idefined.css' %}" rel="stylesheet">
+
+
+{% endblock %}
+
+{% block content %}
+
+<div class="site-wrapper">
+    <div class="site-wrapper-inner">
+        <div class="cover-container">
+            <div class="masthead clearfix">
+                <div class="inner">
+                    {% if request.user.is_authenticated %}
+                    {% include 'header.html' %}
+
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="cover">
+                {%block maincontent %} {% endblock %}
+            </div>
+
+            <div class="mastfoot">
+                <div class="inner">
+                    <p>this is the footer</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+
+
+
+
+

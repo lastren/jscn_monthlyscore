@@ -1,0 +1,267 @@
+{% extends 'jumbotron_base.html' %}
+
+{% block title %}Edit Report{% endblock %}
+
+{% block link %}
+
+{% load static %}
+<link href="{% static 'css/bootstrap-datetimepicker.min.css' %}" rel="stylesheet">
+{% endblock %}
+
+
+{%block maincontent %}
+
+
+<p>
+    <label >报告月份： </label>
+    <input type="text" class="input-small" id="reportmonth" name="reportmonth" disabled="disabled" value="{{ reportmonth|date:'Y-m' }}">
+</p>
+
+<div>
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active"><a href="#partLong" aria-controls="partLong" role="tab" data-toggle="tab">长期项目</a></li>
+        <li role="presentation"><a href="#partShort" aria-controls="partShort" role="tab" data-toggle="tab">短期项目</a></li>
+        <li role="presentation"><a href="#partDaily" aria-controls="partDaily" role="tab" data-toggle="tab">日常运维</a></li>
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="partLong">
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#taskModal" data-tid="" data-tdesc="" data-tdone="" data-type="1">
+                添加项目
+            </button>
+
+            <div class="panel panel-default">
+                <!-- Table -->
+                <table class="table table-bordered" style="table-layout:fixed;">
+                    <thead>
+                    <tr>
+                        <th style="width:40%">任务描述</th>
+                        <th style="width:40%">完成内容</th>
+                        <th style="width:20%">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="taskareaL" class="taskarea">
+                    {% include 'tasks.html' %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div role="tabpanel" class="tab-pane" id="partShort">
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#taskModal" data-tid="" data-tdesc="" data-tdone="" data-type="2">
+                添加项目
+            </button>
+
+            <div class="panel panel-default">
+                <!-- Table -->
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th style="width:40%">任务描述</th>
+                        <th style="width:40%">完成内容</th>
+                        <th style="width:20%">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="taskareaS" class="taskarea">
+                    {% include 'tasks.html' %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div role="tabpanel" class="tab-pane" id="partDaily">
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#taskModal" data-tid="" data-tdesc="" data-tdone="" data-type="3">
+                添加项目
+            </button>
+
+            <div class="panel panel-default">
+                <!-- Table -->
+                <table class="table table-bordered" style="{table-layout:fixed;}">
+                    <thead>
+                    <tr>
+                        <th style="width:40%">任务描述</th>
+                        <th style="width:40%">完成内容</th>
+                        <th style="width:20%">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="taskareaD" class="taskarea">
+                    {% include 'tasks.html' %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<form action="{% url 'main:editReport'  %}" role="form"  method="POST">
+    <fieldset>
+        {% csrf_token %}
+        <input type="hidden" id="reportid" name="reportid" value={{reportid}}>
+
+        <table class="table table-bordered" style="{table-layout:fixed;}">
+            <thead>
+            <tr>
+                <th style="width:20%">指标名称</th>
+                <th style="width:60%">计分规则</th>
+                <th style="width:20%">自评分数</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <th>长期项目研发</th>
+                <th>基准30,最高35</th>
+                <th>{{reportForm.scoreL1}}</th>
+            </tr>
+            <tr>
+                <th>短期研发测试</th>
+                <th>基准25,最高30</th>
+                <th>{{reportForm.scoreL1}}</th>
+            </tr>
+            <tr>
+                <th>日常运维支撑</th>
+                <th>基准25,最高30</th>
+                <th>{{reportForm.scoreL1}}</th>
+            </tr>
+            <tr>
+                <th>日常行为规范</th>
+                <th>达到5分</th>
+                <th>{{reportForm.scoreL1}}</th>
+            </tr>
+            </tbody>
+        </table>
+
+        <input type="submit" value="提交/保存">
+    </fieldset>
+</form>
+
+{% endblock %}
+
+{% block partofbody%}
+{% include 'taskModal.html' %}
+{% include 'confirmModal.html' %}
+{% endblock %}
+
+{%block bodyscriptlink %}
+
+{% load static %}
+<script type="text/javascript" src="{% static 'js/bootstrap-datetimepicker.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/bootstrap-datetimepicker.zh-CN.js' %}" charset="UTF-8"></script>
+
+{% endblock %}
+
+{%block bodyscriptadd %}
+
+<!--$('.datetimepicker').datetimepicker({-->
+<!--format:'yyyy-mm',-->
+<!--language:  'zh-CN',-->
+<!--todayBtn:  false,-->
+<!--autoclose: true,-->
+<!--startView:3,-->
+<!--minView:3,-->
+<!--todayBtn: 1,-->
+<!--startDate:new Date('2016-1-1')-->
+<!--});-->
+
+
+
+
+
+$(document).ready(function(){
+    $.ajaxSetup({
+        data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+    });
+
+$('.modal').modal({
+backdrop:false,
+show:false
+})
+
+$('#taskModal').on('show.bs.modal', function (event) {
+var button = $(event.relatedTarget) // Button that triggered the modal
+var taskid = button.data('tid')
+var taskdesc = button.data('tdesc')
+var taskdone = button.data('tdone')
+var tasktype= button.data('type')
+
+var modal = $(this)
+modal.find('#taskid').val(taskid)
+modal.find('#tasktype').val(tasktype)
+modal.find('#desc').val(taskdesc)
+modal.find('#done').val(taskdone)
+
+
+})
+
+    $("#taskmodalsubmit").click(function(){
+        var modal = $('#taskModal')
+        var reportid = $('#reportid').val()
+
+        var taskid = modal.find('#taskid').val()
+        var taskdesc = modal.find('#desc').val()
+        var taskdone = modal.find('#done').val()
+        var tasktype = modal.find('#tasktype').val()
+
+        $.post("{% url 'main:ajaxedittask' %}",{
+            'reportid':reportid,
+            'taskid':taskid,
+            'taskdesc':taskdesc,
+            'taskdone':taskdone,
+            'tasktype':tasktype
+            },
+            function(data,status){
+                modal.modal('hide')
+                <!--获取从cookie里传过来的tasktype-->
+                var tasktype = Cookies.get('tasktype')
+                switch(tasktype){
+                    case '1':
+                        $("#taskareaL").html(data);
+                        break;
+                    case '2':
+                        $("#taskareaS").html(data);
+                        break;
+                    case '3':
+                        $("#taskareaD").html(data);
+                        break;
+                }
+                <!--用完后删除cookie里的tasktype-->
+                 Cookies.remove('tasktype');
+            });
+        });
+
+
+    $(".taskarea").on("click",".deletetask",function(event){
+        var button = $(event.target)
+        var taskid = button.data('tid')
+        if(confirm('确认删除？')==true){
+            $.post("{% url 'main:ajaxdeletetask' %}",{'taskid':taskid},function(data,status){
+                 <!--获取从cookie里传过来的tasktype-->
+                 var tasktype = Cookies.get('tasktype')
+                 switch(tasktype){
+                    case '1':
+                        $("#taskareaL").html(data);
+                        break;
+                    case '2':
+                        $("#taskareaS").html(data);
+                        break;
+                    case '3':
+                        $("#taskareaD").html(data);
+                        break;
+                    default:
+                        break;
+                }
+                <!--用完后删除cookie里的tasktype-->
+                Cookies.remove('tasktype');
+            });
+        }
+    });
+
+});
+
+
+
+
+
+{% endblock %}

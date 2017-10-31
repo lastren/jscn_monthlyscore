@@ -1,0 +1,12 @@
+{% extends 'jumbotron_base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{%block maincontent %}
+
+{% if newbtn %}
+<a href="{% url 'main:addReport' %}" class="btn btn-lg btn-default">Add Report</a>
+{% endif %}
+
+{% endblock %}
+

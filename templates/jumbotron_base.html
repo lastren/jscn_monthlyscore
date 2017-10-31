@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <link rel="icon" href="../../favicon.ico">
+
+  <title>{% block title %}{% endblock %}</title>
+
+  {% load static %}
+  <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'css/base.css' %}" rel="stylesheet">
+
+  <!-- Custom styles for this template -->
+  <link href="{% static 'css/jumbotron.css' %}" rel="stylesheet">
+
+  <!--用于每个页面需要加载的个性化内容，包括script,css和图片文件等-->
+  {%block link %} {% endblock %}
+
+  <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+  <!--[if lt IE 9]>
+  <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+  <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+</head>
+
+<body>
+
+<div class="container">
+  <div class="header clearfix">
+    <h3 class="text-muted">
+
+        {% if messages %}
+            <script>
+                {% for msg in messages %}
+                    alert('{{ msg.message }}');
+                {% endfor %}
+            </script>
+        {% endif %}
+
+      {% include 'header.html' %}
+      <!--{% if request.user.is_authenticated %}-->
+      <!--{% include 'header.html' %}-->
+      <!--{% endif %}-->
+    </h3>
+  </div>
+
+  <div class="jumbotron">
+    {%block maincontent %} {% endblock %}
+  </div>
+
+
+
+  <footer class="footer">
+    <p>jscn wuxi</p>
+  </footer>
+
+</div> <!-- /container -->
+
+{% block partofbody%}{% endblock %}
+
+<script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/moment.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/js.cookie.js' %}"></script>
+
+{%block bodyscriptlink %} {% endblock %}
+
+<script>
+    {%block bodyscriptadd %}{% endblock %}
+    </script>
+</body>
+</html>

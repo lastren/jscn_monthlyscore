@@ -1,0 +1,47 @@
+{% extends 'jumbotron_base.html' %}
+
+{% block title %}Edit Task{% endblock %}
+
+{% block link %}
+
+{% load static %}
+<link href="{% static 'css/bootstrap-datetimepicker.min.css' %}" rel="stylesheet">
+{% endblock %}
+
+
+{%block maincontent %}
+
+<form action="{% url 'main:editTask'  %}" role="form"  method="POST">
+    <fieldset>
+        {% csrf_token %}
+        {{form.as_p}}
+
+        <input type="submit" value="登录">
+    </fieldset>
+</form>
+
+{% endblock %}
+
+
+{%block bodyscriptlink %}
+
+{% load static %}
+<script type="text/javascript" src="{% static 'js/bootstrap-datetimepicker.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/bootstrap-datetimepicker.zh-CN.js' %}" charset="UTF-8"></script>
+
+{% endblock %}
+
+{%block bodyscriptadd %}
+
+$('.datetimepicker').datetimepicker({
+                format:'yyyy-mm-dd',
+                language:  'zh-CN',
+                todayBtn:  false,
+		        autoclose: true,
+                startView:2,
+                minView:2,
+		        todayBtn: 1,
+                startDate:new Date('2016-1-1')
+            });
+
+{% endblock %}

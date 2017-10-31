@@ -1,0 +1,23 @@
+<nav>
+    <span class="dropdown">
+    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" >
+    {{request.session.username}}
+    <span class="caret"></span>
+    </button>
+  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+    <li><a href="#">修改信息</a></li>
+    <li role="separator" class="divider"></li>
+    <li><a href="{% url 'accounts:logout' %}">注销</a></li>
+  </ul>
+</span>
+
+    {{request.session.userrole}} {{request.session.userdept}}
+
+
+
+    <ul class="nav nav-pills pull-right">
+        <li role="presentation" class="active"><a href="#">Home</a></li>
+        <li role="presentation"><a href="#">About</a></li>
+    </ul>
+</nav>
+
