@@ -50,8 +50,9 @@ def getNewMonth(username):
     if newmonth is not None:
         # 把所有对有效日期都定为当月的1号
         newmonth = datetime.date(newmonth.year, newmonth.month, 1)
-
-    return newmonth
+        return newmonth
+    else:
+        return None
 
 
 def addReport(request):
