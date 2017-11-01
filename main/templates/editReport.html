@@ -96,7 +96,7 @@
 </div>
 
 
-<form action="{% url 'main:editReport'  %}" role="form"  method="POST">
+<form action="{% url 'main:saveReport' 0 %}" role="form"  method="POST">
     <fieldset>
         {% csrf_token %}
         <input type="hidden" id="reportid" name="reportid" value={{reportid}}>
@@ -113,27 +113,28 @@
             <tr>
                 <th>长期项目研发</th>
                 <th>基准30,最高35</th>
-                <th>{{reportForm.scoreL1}}</th>
+                <th>{{reportForm.scoreL}}</th>
             </tr>
             <tr>
                 <th>短期研发测试</th>
                 <th>基准25,最高30</th>
-                <th>{{reportForm.scoreL1}}</th>
+                <th>{{reportForm.scoreS}}</th>
             </tr>
             <tr>
                 <th>日常运维支撑</th>
                 <th>基准25,最高30</th>
-                <th>{{reportForm.scoreL1}}</th>
+                <th>{{reportForm.scoreD}}</th>
             </tr>
             <tr>
                 <th>日常行为规范</th>
                 <th>达到5分</th>
-                <th>{{reportForm.scoreL1}}</th>
+                <th>{{reportForm.scoreR}}</th>
             </tr>
             </tbody>
         </table>
 
-        <input type="submit" value="提交/保存">
+        <input type="submit" value="保存">
+        <input type="submit" formaction="{% url 'main:saveReport' 1 %}" value="提交">
     </fieldset>
 </form>
 

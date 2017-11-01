@@ -18,10 +18,25 @@ class TaskForm(forms.ModelForm):
             }),
         }
 
-class ReportForm(forms.ModelForm):
-    class Meta:
-        model= models.Report
-        fields=['scoreL1','scoreS1','scoreD1','scoreR1']
+class ReportForm(forms.Form):
+    scoreL = forms.IntegerField(
+        max_value=35,
+        min_value=0,
+    )
+    scoreS = forms.IntegerField(
+        max_value=30,
+        min_value=0,
+    )
+    scoreD = forms.IntegerField(
+        max_value=30,
+        min_value=0,
+    )
+    scoreR = forms.IntegerField(
+        max_value=5,
+        min_value=0,
+    )
+
+
 
 
 

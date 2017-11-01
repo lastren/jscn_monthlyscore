@@ -18,6 +18,9 @@ def homeView(request):
     template_name = 'home.html'
 
     username = request.session['username']
+    if username is None:
+        redirect(reverse('accounts:login'))
+
     newmonth = getNewMonth(username)
 
     if newmonth is None:
@@ -76,7 +79,7 @@ def addReport(request):
     report.author=profile
     report.save()
 
-    reportForm = forms.ReportForm(instance=report)
+    reportForm = forms.ReportForm()
 
     return render(request, template_name, {
         'reportForm': reportForm,
@@ -87,6 +90,25 @@ def addReport(request):
 def editReport(request,form):
     template_name = 'editReport.html'
     return render(request,template_name,{'form':form})
+
+def saveReport(request,type):
+    if request.method == 'POST':
+        form = forms.ReportForm(request.POST)
+        reportid = request.POST.get('reportid')
+        print(reportid)
+        if form.is_valid():
+            report= get_object_or_404(Report,pk=int(reportid))
+            report.scoreL1 = form.cleaned_data['scoreL']
+            report.scoreS1 = form.cleaned_data['scoreS']
+            report.scoreD1 = form.cleaned_data['scoreD']
+            report.scoreR1 = form.cleaned_data['scoreR']
+            if type ==0:
+                report.status = report.STATUS[0]
+            elif type ==1:
+                report.status = report.STATUS[1]
+            report.save()
+
+    return redirect(reverse('main:home'))
 
 def addTask(request):
     template_name = 'editTask.html'

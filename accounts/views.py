@@ -39,7 +39,7 @@ def loginView(request):
 
             # Return an 'invalid login' error message.
             messages.error(request, '用户名或密码不正确，请核对后重新输入')
-            return redirect('accounts:login')
+            return redirect(reverse('accounts:login'))
     else:
         form = forms.LoginForm()
         return render(request, template_name,{'form':form})
@@ -47,7 +47,7 @@ def loginView(request):
 
 def logoutView(request):
     logout(request)
-    return redirect('accounts:login')
+    return redirect(reverse('accounts:login'))
 
 
 

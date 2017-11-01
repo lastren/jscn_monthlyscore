@@ -13,6 +13,8 @@ urlpatterns = [
     url(r'^addReport$', views.addReport, name='addReport'),
     url(r'^editReport$', views.editReport, name='editReport'),
 
+    url(r'^saveReport/([0-4]{1})/$', views.saveReport, name='saveReport'),
+
 
     url(r'^ajaxedittask$', views.ajaxedittask, name='ajaxedittask'),
     url(r'^ajaxdeletetask$', views.ajaxdeletetask, name='ajaxdeletetask'),
