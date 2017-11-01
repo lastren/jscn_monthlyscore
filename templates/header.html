@@ -1,4 +1,4 @@
-<nav>
+<nav class="navbar">
     <span class="dropdown">
     <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" >
     {{request.session.username}}
@@ -16,7 +16,21 @@
 
 
     <ul class="nav nav-pills pull-right">
-        <li role="presentation" class="active"><a href="#">Home</a></li>
+        <li role="presentation"><a class="btn btn_default" href="{% url 'main:home' %}">Home</a></li>
+        <li role="presentation">
+            <span class="dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" >
+                我的报告
+                <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                    <li><a href="{% url 'main:getReports' 0 %}">未提交</a></li>
+                    <li><a href="{% url 'accounts:logout' %}">已提交</a></li>
+                    <li><a href="#">在审</a></li>
+                    <li><a href="#">退回</a></li>
+                </ul>
+            </span>
+        </li>
         <li role="presentation"><a href="#">About</a></li>
     </ul>
 </nav>

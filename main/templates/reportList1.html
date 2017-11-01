@@ -1,0 +1,37 @@
+{% extends 'jumbotron_base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{%block maincontent %}
+
+{% block content %}
+    <h2>{{title}}</h2>
+
+    <table class="table table-bordered" style="{table-layout:fixed;}">
+        <thead>
+            <tr>
+                <th style="width:20%">月份</th>
+                <th style="width:16%">状态</th>
+                <th style="width:16%">自评分数</th>
+                <th style="width:16%">科评分数</th>
+                <th style="width:16%">部评分数</th>
+                <th style="width:16%">总分</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for report in report_list %}
+            <tr>
+                <td>{{report.month|date:'Y-m' }}</td>
+                <td>{{report.get_status_display}}</td>
+                <td>{{report.getSum1}}</td>
+                <td>{{report.getSum2}}</td>
+                <td>{{report.getSum3}}</td>
+                <td>{{report.getSumAll}}</td>
+            <tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}
+
+{% endblock %}

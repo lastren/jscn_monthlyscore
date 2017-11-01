@@ -27,13 +27,12 @@ def loginView(request):
                 if user.is_active:
                     login(request, user)
                     # 登陆成功，保存关键数据到session中
-                    userid = User.objects.get(username=username)
-                    userDetail = models.Profile.objects.get(user_id=userid)
-                    userRole = userDetail.userRole
-                    userDept = userDetail.department
-                    request.session['username'] = username
-                    request.session['userrole'] = userRole
-                    request.session['userdept'] = userDept
+                    profile = models.Profile.objects.get(user=user)
+
+                    request.session['userrole'] = profile.userRole
+                    request.session['userdept'] = profile.department
+                    request.session['username'] = profile.displayName
+                    request.session['account'] = username
 
                     return redirect(reverse('main:home'))
 

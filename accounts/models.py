@@ -25,7 +25,7 @@ class Profile(models.Model):
     )
 
     displayName = models.CharField(verbose_name=u'用户名称',max_length=128,default=u'请输入用户名')
-    user = models.OneToOneField(User,verbose_name=u'用户')
+    user = models.OneToOneField(User,verbose_name=u'账号')
     userRole = models.CharField(
         max_length=20,
         choices=USER_ROLE,

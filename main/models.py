@@ -6,16 +6,21 @@ import accounts.models as acModels
 
 # Create your models here.
 class Report(models.Model):
+    STATUS0 = u'0'
+    STATUS1 = u'1'
+    STATUS2 = u'2'
+    STATUS3 = u'0'
+
     STATUS=(
-        (u'1', u'未提交'),
-        (u'2', u'待1审'),
-        (u'3', u'待2审'),
-        (u'4', u'完成'),
+        (STATUS0, u'未提交'),
+        (STATUS1, u'待1审'),
+        (STATUS2, u'待2审'),
+        (STATUS3, u'完成'),
     )
     month=models.DateField(verbose_name=u'报告期号', db_index=True)
     status=models.CharField(
         choices=STATUS,
-        default= u'1',
+        default= u'0',
         max_length=10,
     )
     author=models.ForeignKey(acModels.Profile,related_name='reports')
@@ -35,6 +40,18 @@ class Report(models.Model):
     scoreR1 = models.IntegerField(verbose_name=u'行为规范自评分', default=0)
     scoreR2 = models.IntegerField(verbose_name=u'行为规范科评分', default=0)
     scoreR3 = models.IntegerField(verbose_name=u'行为规范部评分', default=0)
+
+    def getSum1(self):
+        return self.scoreL1+self.scoreS1+self.scoreD1+self.scoreR1
+
+    def getSum2(self):
+        return self.scoreL2+self.scoreS2+self.scoreD2+self.scoreR2
+
+    def getSum3(self):
+        return self.scoreL3+self.scoreS3+self.scoreD3+self.scoreR3
+
+    def getSumAll(self):
+        return self.getSum1()+self.getSum2()+self.getSum3()
 
 
 class Task(models.Model):

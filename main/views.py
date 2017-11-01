@@ -11,17 +11,18 @@ import accounts
 import utils.utils
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
+from django.views.generic import ListView
 
 # Create your views here.
 # Create your views here.
 def homeView(request):
     template_name = 'home.html'
 
-    username = request.session['username']
-    if username is None:
+    account = request.session['account']
+    if account is None:
         redirect(reverse('accounts:login'))
 
-    newmonth = getNewMonth(username)
+    newmonth = getNewMonth(account)
 
     if newmonth is None:
         newbtn=False
@@ -29,17 +30,16 @@ def homeView(request):
         newbtn=True
     return render(request, template_name,{'newbtn':newbtn})
 
-def getNewMonth(username):
+def getNewMonth(account):
     newmonth = None
 
-    userid = User.objects.get(username=username)
-    profile = accounts.models.Profile.objects.get(user_id=userid)
+    user = User.objects.get(username=account)
+    profile = user.profile
     currentDate = datetime.date.today()
     startDate = profile.startDate
     reports = profile.reports
-    if reports.count() == 0:
-        newmonth = profile.startDate
-    else:
+
+    if reports.exists():
         latestreport = profile.reports.latest('month')
         latestmonth = latestreport.month
         mb1 = utils.utils.months_behind(latestmonth, startDate)
@@ -49,6 +49,8 @@ def getNewMonth(username):
             mb2 = utils.utils.months_behind(currentDate, latestmonth)
             if mb2 > 0:
                 newmonth = utils.utils.datetime_offset_by_month(latestmonth, 1)
+    else:
+        newmonth = profile.startDate
 
     if newmonth is not None:
         # 把所有对有效日期都定为当月的1号
@@ -62,10 +64,10 @@ def addReport(request):
     errResponse = redirect(reverse('main:home'))
     template_name = 'editReport.html'
 
-    username = request.session['username']
-    userid = User.objects.get(username=username)
-    profile = accounts.models.Profile.objects.get(user_id=userid)
-    newmonth = getNewMonth(username)
+    account = request.session['account']
+    user = User.objects.get(username=account)
+    profile = user.profile
+    newmonth = getNewMonth(account)
 
     if newmonth is None:
         messages.error(request, '无法创建报告：月份参数缺失')
@@ -95,7 +97,6 @@ def saveReport(request,type):
     if request.method == 'POST':
         form = forms.ReportForm(request.POST)
         reportid = request.POST.get('reportid')
-        print(reportid)
         if form.is_valid():
             report= get_object_or_404(Report,pk=int(reportid))
             report.scoreL1 = form.cleaned_data['scoreL']
@@ -109,6 +110,33 @@ def saveReport(request,type):
             report.save()
 
     return redirect(reverse('main:home'))
+
+# def getReports(request,type):
+#     template_name = 'reportList.html'
+
+class ReportList(ListView):
+    model = Report
+    template_name = 'reportList.html'
+    context_object_name = 'report_list'
+
+    def get_queryset(self):
+        self.type = self.args[0]
+        profile = self.request.user.profile
+        reports = profile.reports.filter(status=self.type)
+        return reports
+
+    # def get_context_data(self, **kwargs):
+    #     # Call the base implementation first to get a context
+    #     context = super(ReportList, self).get_context_data(**kwargs)
+    #     # Add in the publisher
+    #     if self.type == u'0':
+    #         title = u'未提交的报告'
+    #     elif self.type == u'1':
+    #         title = u'未审核的报告'
+    #     context['title'] = title
+    #     return context
+
+
 
 def addTask(request):
     template_name = 'editTask.html'
