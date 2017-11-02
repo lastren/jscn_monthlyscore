@@ -10,31 +10,31 @@
     <table class="table table-bordered" style="{table-layout:fixed;}">
         <thead>
             <tr>
-                <th style="width:14%">月份</th>
-                <th style="width:14%">状态</th>
+                <th style="width:20%">月份</th>
+                <th style="width:18%">状态</th>
                 <th style="width:14%">长期项目</th>
                 <th style="width:14%">短期项目</th>
                 <th style="width:14%">日常运维</th>
                 <th style="width:14%">行为规范</th>
-                <th style="width:16%">操作</th>
+                <!--<th style="width:16%">操作</th>-->
             </tr>
         </thead>
         <tbody>
             {% for report in report_list %}
             <tr>
-                <td>{{report.month|date:'Y-m' }}</td>
+                <td><a href="{% url 'main:editReport' report.pk %}">{{report.month|date:'Y-m' }}</a></td>
                 <td>{{report.get_status_display}}</td>
                 <td>{{report.scoreL1}}</td>
                 <td>{{report.scoreS1}}</td>
                 <td>{{report.scoreD1}}</td>
                 <td>{{report.scoreR1}}</td>
-                <td>
-                    {% if report.status == '0' %}<a href="{% url 'main:editReport' report.pk %}">编辑</a>
-                    {% elif report.status == '1' %}<a>撤回</a>
-                    {% else %}<a>查看</a>
-                    {% endif %}
-                </td>
-            <tr>
+                <!--<td>-->
+                    <!--{% if report.status == '0' %}<a href="{% url 'main:editReport' report.pk %}">编辑</a>-->
+                    <!--{% elif report.status == '1' %}<a href="{% url 'main:withdrawReport' report.pk%}">撤回</a>-->
+                    <!--{% else %}<a>查看</a>-->
+                    <!--{% endif %}-->
+                <!--</td>-->
+            </tr>
             {% endfor %}
         </tbody>
     </table>
@@ -42,3 +42,4 @@
 {% endblock %}
 
 {% endblock %}
+

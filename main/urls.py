@@ -8,16 +8,14 @@ app_name = 'main'
 urlpatterns = [
     url(r'^$', views.homeView, name='home'),
 
-    url(r'^addTask$', views.addTask, name='addTask'),
-    url(r'^editTask$', views.editTask, name='editTask'),
-
     url(r'^addReport$', views.addReport, name='addReport'),
-    url(r'^editReport$', views.editReport, name='editReport'),
+    url(r'^editReport/([0-9]+)/$', views.editReport, name='editReport'),
 
     url(r'^saveReport/([0-4]{1})/$', views.saveReport, name='saveReport'),
 
     # url(r'^getReports/([0-4]{1})/$', views.saveReport, name='getReports'),
-    url(r'^getReports/([0-4]{1})/$', ReportList.as_view(),name='getReports'),
+    url(r'^getMyReports/([0-4]{1})/$', ReportList.as_view(),{'imauthor':u'1'},name='getMyReports'),
+    url(r'^getTheirReports/([0-4]{1})/$', ReportList.as_view(),{'imauthor':u'0'},name='getTheirReports'),
 
 
     url(r'^ajaxedittask$', views.ajaxedittask, name='ajaxedittask'),

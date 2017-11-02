@@ -13,6 +13,6 @@ def current_reportid(context):
     return value
 
 
-@register.inclusion_tag('results.html')
-def show_results(report):
-    tasks = report.tasks.all()
+@register.inclusion_tag('tasks.html')
+def show_tasks(tasks):
+    return {'tasks':tasks}

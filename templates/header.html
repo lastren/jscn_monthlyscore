@@ -24,8 +24,8 @@
                 <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                    <li><a href="{% url 'main:getReports' 0 %}">未提交</a></li>
-                    <li><a href="{% url 'accounts:logout' %}">已提交</a></li>
+                    <li><a href="{% url 'main:getMyReports' 0 %}">未提交</a></li>
+                    <li><a href="{% url 'main:getMyReports' 1 %}">已提交</a></li>
                     <li><a href="#">在审</a></li>
                     <li><a href="#">退回</a></li>
                 </ul>

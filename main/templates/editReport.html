@@ -6,6 +6,8 @@
 
 {% load static %}
 <link href="{% static 'css/bootstrap-datetimepicker.min.css' %}" rel="stylesheet">
+
+{% load myfiltertag %}
 {% endblock %}
 
 
@@ -43,7 +45,7 @@
                     </tr>
                     </thead>
                     <tbody id="taskareaL" class="taskarea">
-                    {% include 'tasks.html' %}
+                    {% show_tasks tasksL %}
                     </tbody>
                 </table>
             </div>
@@ -65,7 +67,7 @@
                     </tr>
                     </thead>
                     <tbody id="taskareaS" class="taskarea">
-                    {% include 'tasks.html' %}
+                    {% show_tasks tasksS %}
                     </tbody>
                 </table>
             </div>
@@ -87,7 +89,7 @@
                     </tr>
                     </thead>
                     <tbody id="taskareaD" class="taskarea">
-                    {% include 'tasks.html' %}
+                    {% show_tasks tasksD %}
                     </tbody>
                 </table>
             </div>
@@ -142,16 +144,8 @@
 
 {% block partofbody%}
 {% include 'taskModal.html' %}
-{% include 'confirmModal.html' %}
 {% endblock %}
 
-{%block bodyscriptlink %}
-
-{% load static %}
-<script type="text/javascript" src="{% static 'js/bootstrap-datetimepicker.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'js/bootstrap-datetimepicker.zh-CN.js' %}" charset="UTF-8"></script>
-
-{% endblock %}
 
 {%block bodyscriptadd %}
 

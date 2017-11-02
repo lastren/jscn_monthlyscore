@@ -6,16 +6,24 @@ import accounts.models as acModels
 
 # Create your models here.
 class Report(models.Model):
-    STATUS0 = u'0'
-    STATUS1 = u'1'
-    STATUS2 = u'2'
-    STATUS3 = u'0'
+    STATUS_INITIAL = u'0'
+    STATUS_SUBMITTOLEADER = u'1'
+    STATUS_LEADERCHECK = u'2'
+    STATUS_SUBMITTOMANAGER = u'3'
+    STATUS_MANAGERCHECK = u'4'
+    STATUS_ARCHIVED = u'5'
+    STATUS_RETURNBYLEADER = u'10'
+    STATUS_RETURNBYMANAGER = u'20'
 
     STATUS=(
-        (STATUS0, u'未提交'),
-        (STATUS1, u'待1审'),
-        (STATUS2, u'待2审'),
-        (STATUS3, u'完成'),
+        (STATUS_INITIAL, u'未提交'),
+        (STATUS_SUBMITTOLEADER, u'已提交科室'),
+        (STATUS_LEADERCHECK, u'科室审核中'),
+        (STATUS_SUBMITTOMANAGER, u'已提交部门'),
+        (STATUS_MANAGERCHECK, u'部门审核中'),
+        (STATUS_ARCHIVED, u'已存档'),
+        (STATUS_RETURNBYLEADER, u'退回'),
+        (STATUS_RETURNBYMANAGER, u'退回'),
     )
     month=models.DateField(verbose_name=u'报告期号', db_index=True)
     status=models.CharField(

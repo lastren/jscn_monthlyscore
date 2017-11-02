@@ -8,10 +8,12 @@ from django.http import HttpResponseRedirect
 import datetime
 from django.contrib.auth.models import User
 import accounts
+from accounts.models import Profile
 import utils.utils
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from django.views.generic import ListView
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 # Create your views here.
@@ -89,9 +91,34 @@ def addReport(request):
         'reportmonth':report.month
     })
 
-def editReport(request,form):
+def editReport(request,reportid):
     template_name = 'editReport.html'
-    return render(request,template_name,{'form':form})
+
+    report = get_object_or_404(Report,pk=int(reportid))
+
+    reportForm = forms.ReportForm({
+        'scoreL':report.scoreL1,
+        'scoreS':report.scoreS1,
+        'scoreD':report.scoreD1,
+        'scoreR':report.scoreR1,
+    })
+    # reportForm.scoreL = report.scoreL1
+    # reportForm.scoreS = report.scoreS1
+    # reportForm.scoreD = report.scoreD1
+    # reportForm.scoreR = report.scoreR1
+
+    tasksL = report.tasks.filter(type=u'1')
+    tasksS = report.tasks.filter(type=u'2')
+    tasksD = report.tasks.filter(type=u'3')
+
+    return render(request,template_name,{
+        'reportForm':reportForm,
+        'reportmonth': report.month,
+        'reportid':reportid,
+        'tasksL':tasksL,
+        'tasksS':tasksS,
+        'tasksD':tasksD
+    })
 
 def saveReport(request,type):
     if request.method == 'POST':
@@ -103,17 +130,21 @@ def saveReport(request,type):
             report.scoreS1 = form.cleaned_data['scoreS']
             report.scoreD1 = form.cleaned_data['scoreD']
             report.scoreR1 = form.cleaned_data['scoreR']
-            if type ==0:
-                report.status = report.STATUS[0]
-            elif type ==1:
-                report.status = report.STATUS[1]
+            if type == Report.STATUS0:
+                report.status = report.STATUS0
+            elif type ==Report.STATUS1:
+                report.status = report.STATUS1
             report.save()
 
+    return redirect(reverse('main:home'))
+
+def withdrawReport(request,aa):
     return redirect(reverse('main:home'))
 
 # def getReports(request,type):
 #     template_name = 'reportList.html'
 
+# @login_required
 class ReportList(ListView):
     model = Report
     template_name = 'reportList.html'
@@ -121,9 +152,27 @@ class ReportList(ListView):
 
     def get_queryset(self):
         self.type = self.args[0]
+        self.imauthor = self.kwargs['imauthor']
         profile = self.request.user.profile
-        reports = profile.reports.filter(status=self.type)
-        return reports
+
+        if self.imauthor == u'1':
+            reports = profile.reports.filter(status=self.type)
+            return reports
+        else:
+            if profile.userRole==Profile.LEADER:
+                if self.type != Report.STATUS_INITIAL:
+                    reports = Report.objects.filter(author__department=profile.department
+                                                    ).filter(status=self.type)
+                    return reports
+                else:
+                    return None
+            elif profile.userRole==Profile.MANAGER:
+                if self.type == Report.STATUS_SUBMITTOMANAGER
+
+
+
+
+
 
     # def get_context_data(self, **kwargs):
     #     # Call the base implementation first to get a context
@@ -136,45 +185,6 @@ class ReportList(ListView):
     #     context['title'] = title
     #     return context
 
-
-
-def addTask(request):
-    template_name = 'editTask.html'
-    return render(request,template_name)
-
-def editTask(request):
-    template_name = 'editTask.html'
-    form = forms.TaskForm()
-    if request.method == 'POST':
-        reportid = request.POST['reportid']
-        taskid = request.POST['taskid']
-        taskdesc = request.POST['desc']
-        taskdone = request.POST['done']
-
-        if reportid == "":
-            report = Report()
-            report.month = datetime.datetime.strptime(request.POST['month'],"%Y-%m")
-            print(report.month)
-            report.save()
-        else:
-            report = Report.objects.get(pk=reportid)
-
-        if taskid == "":
-            task = Task()
-        else:
-            task = Task.objects.get(pk=taskid)
-
-        task.desc=taskdesc
-        task.done=taskdone
-        task.report=report
-        task.save()
-
-        form=forms.ReportForm(report)
-        return HttpResponseRedirect(reverse('main:editReport',args=(form,)))
-    else:
-        pass
-
-    return render(request,template_name,{'form':form})
 
 
 def ajaxedittask(request):
@@ -207,6 +217,7 @@ def ajaxedittask(request):
     template_name = 'tasks.html'
     # request.session['reportid'] = report.pk
     response = render(request,template_name,{'tasks':tasks})
+    # this cookie kv will be deleted in the js
     response.set_cookie('tasktype',tasktype)
     return response
 
@@ -225,6 +236,7 @@ def ajaxdeletetask(request):
     tasks = report.tasks.filter(type=tasktype)
 
     response = render(request, template_name, {'tasks': tasks})
+    #this cookie kv will be deleted in the js
     response.set_cookie('tasktype', tasktype)
     return response
 
