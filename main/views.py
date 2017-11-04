@@ -138,8 +138,8 @@ def saveReport(request,type):
 
     return redirect(reverse('main:home'))
 
-def withdrawReport(request,aa):
-    return redirect(reverse('main:home'))
+# def withdrawReport(request,aa):
+#     return redirect(reverse('main:home'))
 
 # def getReports(request,type):
 #     template_name = 'reportList.html'
@@ -160,14 +160,23 @@ class ReportList(ListView):
             return reports
         else:
             if profile.userRole==Profile.LEADER:
-                if self.type != Report.STATUS_INITIAL:
+                if self.type != Report.STATUS_INITIAL and self.type != Report.STATUS_ARCHIVED:
                     reports = Report.objects.filter(author__department=profile.department
                                                     ).filter(status=self.type)
                     return reports
                 else:
                     return None
             elif profile.userRole==Profile.MANAGER:
-                if self.type == Report.STATUS_SUBMITTOMANAGER
+                if self.type == Report.STATUS_SUBMITTOMANAGER or self.type == Report.STATUS_MANAGERCHECK:
+                    reports = Report.objects.filter(author__department=profile.department
+                                                    ).filter(status = self.type)
+                    return reports
+                else:
+                    return None
+            else:
+                return None
+
+
 
 
 

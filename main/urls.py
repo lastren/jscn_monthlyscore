@@ -14,8 +14,8 @@ urlpatterns = [
     url(r'^saveReport/([0-4]{1})/$', views.saveReport, name='saveReport'),
 
     # url(r'^getReports/([0-4]{1})/$', views.saveReport, name='getReports'),
-    url(r'^getMyReports/([0-4]{1})/$', ReportList.as_view(),{'imauthor':u'1'},name='getMyReports'),
-    url(r'^getTheirReports/([0-4]{1})/$', ReportList.as_view(),{'imauthor':u'0'},name='getTheirReports'),
+    url(r'^getMyReports/([0-5]{1,2})/$', ReportList.as_view(),{'imauthor':u'1'},name='getMyReports'),
+    url(r'^getTheirReports/([0-5]{1,2})/$', ReportList.as_view(),{'imauthor':u'0'},name='getTheirReports'),
 
 
     url(r'^ajaxedittask$', views.ajaxedittask, name='ajaxedittask'),
