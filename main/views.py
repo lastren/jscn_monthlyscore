@@ -96,20 +96,81 @@ def editReport(request,reportid):
 
     report = get_object_or_404(Report,pk=int(reportid))
 
-    reportForm = forms.ReportForm({
-        'scoreL':report.scoreL1,
-        'scoreS':report.scoreS1,
-        'scoreD':report.scoreD1,
-        'scoreR':report.scoreR1,
-    })
-    # reportForm.scoreL = report.scoreL1
-    # reportForm.scoreS = report.scoreS1
-    # reportForm.scoreD = report.scoreD1
-    # reportForm.scoreR = report.scoreR1
+    reportForm = None
 
     tasksL = report.tasks.filter(type=u'1')
     tasksS = report.tasks.filter(type=u'2')
     tasksD = report.tasks.filter(type=u'3')
+
+    #account = request.session['account']
+    profile = request.user.profile
+    imauthor=False
+    if profile.pk == report.author.pk:
+        imauthor = True
+
+    imleader=False
+    if profile.userRole == Profile.LEADER:
+        imleader=True
+
+    immanager=False
+    if profile.userRole == Profile.MANAGER:
+        immanager=True
+
+    taskEditable = False
+    if report.status == Report.STATUS_INITIAL:
+        if imauthor:
+            reportForm = forms.ReportForm({
+                'scoreL': report.scoreL1,
+                'scoreS': report.scoreS1,
+                'scoreD': report.scoreD1,
+                'scoreR': report.scoreR1,
+            })
+            taskEditable=True
+        else:
+            whenErrorHappens(request, u'无操作权限')
+    elif report.status == Report.STATUS_SUBMITTOLEADER:
+        if imauthor:
+            reportForm = {
+                'scoreL': report.scoreL1,
+                'scoreS': report.scoreS1,
+                'scoreD': report.scoreD1,
+                'scoreR': report.scoreR1
+            }
+            template_name = 'editReport10.html'
+        elif imleader:
+            report.status=Report.STATUS_LEADERCHECK
+            report.save()
+
+            reportForm = {
+                'scoreL': report.scoreL2,
+                'scoreS': report.scoreS2,
+                'scoreD': report.scoreD2,
+                'scoreR': report.scoreR2
+            }
+
+            template_name = 'editReport21.html'
+            return render(request, template_name, {
+                'reportForm': reportForm,
+                'reportmonth': report.month,
+                'reportid': reportid,
+                'tasksL': tasksL,
+                'tasksS': tasksS,
+                'tasksD': tasksD,
+                'taskEditable': taskEditable,
+                'scorel1':report.scoreL1,
+                'scores1': report.scoreS1,
+                'scored1': report.scoreD1,
+                'scorer1': report.scoreR1
+            })
+        else:
+            whenErrorHappens(request, u'无操作权限')
+
+
+
+
+
+
+
 
     return render(request,template_name,{
         'reportForm':reportForm,
@@ -117,8 +178,15 @@ def editReport(request,reportid):
         'reportid':reportid,
         'tasksL':tasksL,
         'tasksS':tasksS,
-        'tasksD':tasksD
+        'tasksD':tasksD,
+        'taskEditable':taskEditable
     })
+
+def whenErrorHappens(request,errStr):
+    errResponse = redirect(reverse('main:home'))
+    messages.error(request, errStr)
+    return errResponse
+
 
 def saveReport(request,type):
     if request.method == 'POST':
@@ -126,17 +194,42 @@ def saveReport(request,type):
         reportid = request.POST.get('reportid')
         if form.is_valid():
             report= get_object_or_404(Report,pk=int(reportid))
-            report.scoreL1 = form.cleaned_data['scoreL']
-            report.scoreS1 = form.cleaned_data['scoreS']
-            report.scoreD1 = form.cleaned_data['scoreD']
-            report.scoreR1 = form.cleaned_data['scoreR']
-            if type == Report.STATUS0:
-                report.status = report.STATUS0
-            elif type ==Report.STATUS1:
-                report.status = report.STATUS1
-            report.save()
+
+            if report.status == Report.STATUS_INITIAL:
+                report.scoreL1 = form.cleaned_data['scoreL']
+                report.scoreS1 = form.cleaned_data['scoreS']
+                report.scoreD1 = form.cleaned_data['scoreD']
+                report.scoreR1 = form.cleaned_data['scoreR']
+                if type == Report.STATUS_INITIAL or type == Report.STATUS_SUBMITTOLEADER:
+                    report.status = type
+                    report.save()
 
     return redirect(reverse('main:home'))
+
+#only change status, not the content,used for 1-0,3-2
+def retrieveReport(request):
+    if request.method == 'POST':
+        reportid = request.POST.get('reportid')
+
+        report = get_object_or_404(Report,pk=int(reportid))
+        status = report.status
+        profile = request.user.profile
+        author = report.author
+
+        if profile.pk == author.pk:
+            if status == Report.STATUS_SUBMITTOLEADER:
+                report.status= Report.STATUS_INITIAL
+                report.save()
+        elif profile.userRole==Profile.LEADER and profile.department==author.department:
+            if status == Report.STATUS_SUBMITTOMANAGER:
+                report.status = Report.STATUS_LEADERCHECK
+                report.save()
+            elif status == Report.STATUS_LEADERCHECK:
+                report.status = Report.STATUS_RETURNBYLEADER
+                report.save()
+
+    return redirect(reverse('main:home'))
+
 
 # def withdrawReport(request,aa):
 #     return redirect(reverse('main:home'))
@@ -167,7 +260,7 @@ class ReportList(ListView):
                 else:
                     return None
             elif profile.userRole==Profile.MANAGER:
-                if self.type == Report.STATUS_SUBMITTOMANAGER or self.type == Report.STATUS_MANAGERCHECK:
+                if self.type == Report.STATUS_SUBMITTOMANAGER or self.type == Report.STATUS_MANAGERCHECK or self.type == Report.STATUS_RETURNBYMANAGER :
                     reports = Report.objects.filter(author__department=profile.department
                                                     ).filter(status = self.type)
                     return reports

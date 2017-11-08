@@ -31,6 +31,19 @@
                 </ul>
             </span>
         </li>
+        <li role="presentation">
+            <span class="dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu3" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" >
+                科室报告
+                <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenu3">
+                    <li><a href="{% url 'main:getTheirReports' 1 %}">已提交</a></li>
+                    <li><a href="{% url 'main:getTheirReports' 2 %}">在审</a></li>
+                    <li><a href="{% url 'main:getTheirReports' 10 %}">退回</a></li>
+                </ul>
+            </span>
+        </li>
         <li role="presentation"><a href="#">About</a></li>
     </ul>
 </nav>

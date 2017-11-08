@@ -14,5 +14,5 @@ def current_reportid(context):
 
 
 @register.inclusion_tag('tasks.html')
-def show_tasks(tasks):
-    return {'tasks':tasks}
+def show_tasks(tasks,editable):
+    return {'tasks':tasks,'taskEditable':editable}

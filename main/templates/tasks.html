@@ -2,10 +2,12 @@
 <tr>
     <td style="word-wrap:break-word;word-break:break-all;text-align: left;">{{item.desc}}</td>
     <td style="word-wrap:break-word;word-break:break-all;text-align: left;">{{item.done}}</td>
+    {% if taskEditable %}
     <td>
         <button type="button" class="btn btn-default deletetask" data-tid={{item.id}}>删除</button>
         <button type="button" class="btn btn-default" data-toggle="modal" data-target="#taskModal" data-tid={{item.id}} data-tdesc={{item.desc}} data-tdone={{item.done}} data-type={{item.type}}>修改</button>
     </td>
+    {% endif %}
 </tr>
 {% endfor %}
 

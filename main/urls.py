@@ -12,6 +12,7 @@ urlpatterns = [
     url(r'^editReport/([0-9]+)/$', views.editReport, name='editReport'),
 
     url(r'^saveReport/([0-4]{1})/$', views.saveReport, name='saveReport'),
+    url(r'^retrieveReport$', views.retrieveReport, name='retrieveReport'),
 
     # url(r'^getReports/([0-4]{1})/$', views.saveReport, name='getReports'),
     url(r'^getMyReports/([0-5]{1,2})/$', ReportList.as_view(),{'imauthor':u'1'},name='getMyReports'),
