@@ -9,6 +9,7 @@ from django.core.urlresolvers import reverse
 from django.contrib import messages
 import datetime
 import utils.utils
+from models import Profile
 
 import forms,models
 import logging
@@ -30,9 +31,13 @@ def loginView(request):
                     profile = models.Profile.objects.get(user=user)
 
                     request.session['userrole'] = profile.userRole
-                    request.session['userdept'] = profile.department
+                    request.session['userdept'] = profile.get_department_display()
                     request.session['username'] = profile.displayName
                     request.session['account'] = username
+                    request.session['depts'] = {Profile.DP1:Profile.DP1NAME,
+                                                Profile.DP2: Profile.DP2NAME,
+                                                Profile.DP3: Profile.DP3NAME
+                                                }
 
                     return redirect(reverse('main:home'))
 

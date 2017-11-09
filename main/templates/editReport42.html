@@ -10,10 +10,10 @@
 {%block maincontent %}
 
 
-<p>
-    <label >报告月份： </label>
-    <input type="text" class="input-small" id="reportmonth" name="reportmonth" disabled="disabled" value="{{ reportmonth|date:'Y-m' }}">
-</p>
+<p>部门：{{department}} </p>
+<p>报告人：{{author}} </p>
+<p>期号：{{ reportmonth|date:'Y-m' }} </p>
+
 
 <div>
     <!-- Nav tabs -->
@@ -79,7 +79,7 @@
 </div>
 
 
-<form action="{% url 'main:retrieveReport' %}" role="form"  method="POST">
+<form action="{% url 'main:saveReport' 4 %}" role="form"  method="POST">
     <fieldset>
         {% csrf_token %}
         <input type="hidden" id="reportid" name="reportid" value={{reportid}}>
@@ -87,36 +87,44 @@
         <table class="table table-bordered" style="{table-layout:fixed;}">
             <thead>
             <tr>
-                <th style="width:20%">指标名称</th>
-                <th style="width:60%">计分规则</th>
-                <th style="width:20%">自评分数</th>
+                <th style="width:25%">指标名称</th>
+                <th style="width:25%">自评分数</th>
+                <th style="width:25%">科室评分</th>
+                <th style="width:25%">部门评分</th>
             </tr>
             </thead>
             <tbody>
             <tr>
                 <td>长期项目研发</td>
-                <td>基准30,最高35</td>
+                <td>{{scorel1}}</td>
+                <td>{{scorel2}}</td>
                 <td>{{reportForm.scoreL}}</td>
             </tr>
             <tr>
                 <td>短期研发测试</td>
-                <td>基准25,最高30</td>
+                <td>{{scores1}}</td>
+                <td>{{scores2}}</td>
                 <td>{{reportForm.scoreS}}</td>
             </tr>
             <tr>
                 <td>日常运维支撑</td>
-                <td>基准25,最高30</td>
+                <td>{{scored1}}</td>
+                <td>{{scored2}}</td>
                 <td>{{reportForm.scoreD}}</td>
             </tr>
             <tr>
                 <td>日常行为规范</td>
-                <td>达到5分</td>
+                <td>{{scorer1}}</td>
+                <td>{{scorer2}}</td>
                 <td>{{reportForm.scoreR}}</td>
             </tr>
             </tbody>
         </table>
+
         {% if hasbtn %}
-        <input type="submit"  value="撤回">
+        <input type="submit" formaction="{% url 'main:retrieveReport'%}" value="退回">
+        <input type="submit" value="保存">
+        <input type="submit" formaction="{% url 'main:saveReport' 5 %}" value="归档">
         {% endif %}
     </fieldset>
 </form>

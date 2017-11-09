@@ -87,36 +87,37 @@
         <table class="table table-bordered" style="{table-layout:fixed;}">
             <thead>
             <tr>
-                <th style="width:20%">指标名称</th>
-                <th style="width:60%">计分规则</th>
-                <th style="width:20%">自评分数</th>
+                <th style="width:40%">指标名称</th>
+                <th style="width:30%">自评分数</th>
+                <th style="width:30%">科室评分</th>
             </tr>
             </thead>
             <tbody>
             <tr>
                 <td>长期项目研发</td>
-                <td>基准30,最高35</td>
+                <td>{{scorel1}}</td>
                 <td>{{reportForm.scoreL}}</td>
             </tr>
             <tr>
                 <td>短期研发测试</td>
-                <td>基准25,最高30</td>
+                <td>{{scores1}}</td>
                 <td>{{reportForm.scoreS}}</td>
             </tr>
             <tr>
                 <td>日常运维支撑</td>
-                <td>基准25,最高30</td>
+                <td>{{scored1}}</td>
                 <td>{{reportForm.scoreD}}</td>
             </tr>
             <tr>
                 <td>日常行为规范</td>
-                <td>达到5分</td>
+                <td>{{scorer1}}</td>
                 <td>{{reportForm.scoreR}}</td>
             </tr>
             </tbody>
         </table>
+
         {% if hasbtn %}
-        <input type="submit"  value="撤回">
+        <input type="submit" value="撤回">
         {% endif %}
     </fieldset>
 </form>

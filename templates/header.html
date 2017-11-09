@@ -11,11 +11,10 @@
   </ul>
 </span>
 
-    {{request.session.userrole}} {{request.session.userdept}}
-
-
+    {{request.session.userdept}}
 
     <ul class="nav nav-pills pull-right">
+        {% if request.session.userrole != 'manager' %}
         <li role="presentation"><a class="btn btn_default" href="{% url 'main:home' %}">Home</a></li>
         <li role="presentation">
             <span class="dropdown">
@@ -27,10 +26,12 @@
                     <li><a href="{% url 'main:getMyReports' 0 %}">未提交</a></li>
                     <li><a href="{% url 'main:getMyReports' 1 %}">已提交</a></li>
                     <li><a href="{% url 'main:getMyReports' 2 %}">在审</a></li>
-                    <li><a href="{% url 'main:getMyReports' 10 %}">退回</a></li>
+                    <li><a href="{% url 'main:getMyReports' 6 %}">退回</a></li>
                 </ul>
             </span>
         </li>
+
+        {% if request.session.userrole == 'leader' %}
         <li role="presentation">
             <span class="dropdown">
                 <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu3" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" >
@@ -38,13 +39,35 @@
                 <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenu3">
-                    <li><a href="{% url 'main:getTheirReports' 1 %}">已提交</a></li>
+                    <li><a href="{% url 'main:getTheirReports' 1 %}">待审</a></li>
                     <li><a href="{% url 'main:getTheirReports' 2 %}">在审</a></li>
-                    <li><a href="{% url 'main:getTheirReports' 10 %}">退回</a></li>
+                    <li><a href="{% url 'main:getTheirReports' 3 %}">已审</a></li>
+                    <li><a href="{% url 'main:getTheirReports' 7 %}">退回</a></li>
                 </ul>
             </span>
         </li>
-        <li role="presentation"><a href="#">About</a></li>
+        {% endif %}
+
+        {% else %}
+
+        {% for key,value in request.session.depts.items %}
+        <li role="presentation">
+            <span class="dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" >
+                    {{value}}
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a href="{% url 'main:getDeptReports' 3 key %}">待审</a></li>
+                    <li><a href="{% url 'main:getDeptReports' 4 key %}">在审</a></li>
+                    <li><a href="{% url 'main:getDeptReports' 7 key %}">退回</a></li>
+                </ul>
+            </span>
+        </li>
+        {% endfor %}
+
+        {% endif %}
+
     </ul>
 </nav>
 

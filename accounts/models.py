@@ -15,13 +15,18 @@ class Profile(models.Model):
         (WORKER, u'职员'),
     )
 
-    DP1 = u'科室1'
-    DP2 = u'科室2'
-    DP3 = u'科室3'
+    DP0 = u'0'
+    DP1 = u'1'
+    DP2 = u'2'
+    DP3 = u'3'
+    DP1NAME = u'科室1'
+    DP2NAME = u'科室2'
+    DP3NAME = u'科室3'
     DEPARTMENT =(
-        (DP1, u'科室1'),
-        (DP2, u'科室2'),
-        (DP3, u'科室3'),
+        (DP0, u''),
+        (DP1, DP1NAME),
+        (DP2, DP2NAME),
+        (DP3, DP3NAME),
     )
 
     displayName = models.CharField(verbose_name=u'用户名称',max_length=128,default=u'请输入用户名')
@@ -34,7 +39,7 @@ class Profile(models.Model):
     department = models.CharField(
         max_length=20,
         choices=DEPARTMENT,
-        default=DP1,
+        default=DP0,
     )
     startDate = models.DateField(verbose_name=u'启用日期',auto_now_add=True,blank=True)
 
