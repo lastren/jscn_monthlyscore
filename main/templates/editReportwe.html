@@ -1,6 +1,6 @@
 {% extends 'jumbotron_base.html' %}
 
-{% block title %}Edit Report{% endblock %}
+{% block title %}Edit Report WE{% endblock %}
 
 {% block link %}
 
@@ -14,10 +14,7 @@
 {%block maincontent %}
 
 
-<p>
-    <label >报告月份： </label>
-    <input type="text" class="input-small" id="reportmonth" name="reportmonth" disabled="disabled" value="{{ reportmonth|date:'Y-m' }}">
-</p>
+{% include 'reportTitlew.html' %}
 
 <div>
     <!-- Nav tabs -->
@@ -45,7 +42,7 @@
                     </tr>
                     </thead>
                     <tbody id="taskareaL" class="taskarea">
-                    {% show_tasks tasksL taskEditable%}
+                    {% show_tasks tasksL True%}
                     </tbody>
                 </table>
             </div>
@@ -67,7 +64,7 @@
                     </tr>
                     </thead>
                     <tbody id="taskareaS" class="taskarea">
-                    {% show_tasks tasksS taskEditable %}
+                    {% show_tasks tasksS True %}
                     </tbody>
                 </table>
             </div>
@@ -89,7 +86,7 @@
                     </tr>
                     </thead>
                     <tbody id="taskareaD" class="taskarea">
-                    {% show_tasks tasksD taskEditable %}
+                    {% show_tasks tasksD True %}
                     </tbody>
                 </table>
             </div>

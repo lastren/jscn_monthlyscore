@@ -64,7 +64,7 @@ def getNewMonth(account):
 
 def addReport(request):
     errResponse = redirect(reverse('main:home'))
-    template_name = 'editReport00.html'
+    template_name = 'editReportwe.html'
 
     account = request.session['account']
     user = User.objects.get(username=account)
@@ -106,28 +106,10 @@ def editReport(request,reportid):
                 'reportid': reportid,
                 'tasksL': tasksL,
                 'tasksS': tasksS,
-                'tasksD': tasksD,
-                'taskEditable':False
+                'tasksD': tasksD
             }
 
-
-
-    #account = request.session['account']
-    profile = request.user.profile
-    imauthor=False
-    if profile.pk == report.author.pk:
-        imauthor = True
-
-    imleader=False
-    if profile.userRole == Profile.LEADER:
-        if profile.department == report.author.department:
-            imleader=True
-        else:
-            whenErrorHappens(request, u'无操作权限')
-
-    immanager=False
-    if profile.userRole == Profile.MANAGER:
-        immanager=True
+    imauthor,imleader,immanager = checkMyRole(request.user.profile,report.author)
 
     if report.status == Report.STATUS_INITIAL:
         if imauthor:
@@ -138,8 +120,7 @@ def editReport(request,reportid):
                 'scoreR': report.scoreR1,
             })
             context['reportForm']=reportForm
-            context['taskEditable']=True
-            return render(request, 'editReport00.html', context)
+            return render(request, 'editReportwe.html', context)
         else:
             whenErrorHappens(request, u'无操作权限')
     elif report.status in [Report.STATUS_SUBMITTOLEADER, Report.STATUS_LEADERCHECK]:
@@ -152,7 +133,7 @@ def editReport(request,reportid):
             }
             context['reportForm'] = reportForm
             context['hasbtn']= report.status == Report.STATUS_SUBMITTOLEADER
-            return render(request, 'editReport10.html', context)
+            return render(request, 'editReportwr.html', context)
         elif imleader:
             report.status=Report.STATUS_LEADERCHECK
             report.save()
@@ -168,9 +149,8 @@ def editReport(request,reportid):
             context['scores1'] = report.scoreS1
             context['scored1'] = report.scoreD1
             context['scorer1'] = report.scoreR1
-            context['hasbtn'] = True
             context['author'] = report.author
-            return render(request, 'editReport21.html',context)
+            return render(request, 'editReportle.html',context)
         else:
             whenErrorHappens(request, u'无操作权限')
     elif report.status == Report.STATUS_RETURNBYLEADER:
@@ -182,22 +162,19 @@ def editReport(request,reportid):
                 'scoreR': report.scoreR1,
             })
             context['reportForm'] = reportForm
-            context['taskEditable'] = True
-            return render(request, 'editReport00.html', context)
+            return render(request, 'editReportwe.html', context)
         elif imleader:
-            reportForm = {
-                'scoreL': report.scoreL2,
-                'scoreS': report.scoreS2,
-                'scoreD': report.scoreD2,
-                'scoreR': report.scoreR2,
-            }
-            context['reportForm'] = reportForm
             context['scorel1'] = report.scoreL1
             context['scores1'] = report.scoreS1
             context['scored1'] = report.scoreD1
             context['scorer1'] = report.scoreR1
+            context['scorel2'] = report.scoreL2
+            context['scores2'] = report.scoreS2
+            context['scored2'] = report.scoreD2
+            context['scorer2'] = report.scoreR2
             context['hasbtn'] = False
-            return render(request, 'editReport21.html', context)
+            context['author'] = report.author
+            return render(request, 'editReportlr.html', context)
         else:
             whenErrorHappens(request, u'无操作权限')
     elif report.status in [Report.STATUS_SUBMITTOMANAGER, Report.STATUS_MANAGERCHECK]:
@@ -210,21 +187,19 @@ def editReport(request,reportid):
             }
             context['reportForm'] = reportForm
             context['hasbtn'] = False
-            return render(request, 'editReport10.html', context)
+            return render(request, 'editReportwr.html', context)
         elif imleader:
-            reportForm = {
-                'scoreL': report.scoreL2,
-                'scoreS': report.scoreS2,
-                'scoreD': report.scoreD2,
-                'scoreR': report.scoreR2,
-            }
-            context['reportForm'] = reportForm
             context['scorel1'] = report.scoreL1
             context['scores1'] = report.scoreS1
             context['scored1'] = report.scoreD1
             context['scorer1'] = report.scoreR1
+            context['scorel2'] = report.scoreL2
+            context['scores2'] = report.scoreS2
+            context['scored2'] = report.scoreD2
+            context['scorer2'] = report.scoreR2
             context['hasbtn'] = report.status==Report.STATUS_SUBMITTOMANAGER
-            return render(request, 'editReport31.html', context)
+            context['author'] = report.author
+            return render(request, 'editReportlr.html', context)
         elif immanager:
             report.status = Report.STATUS_MANAGERCHECK
             report.save()
@@ -244,17 +219,52 @@ def editReport(request,reportid):
             context['scores2'] = report.scoreS2
             context['scored2'] = report.scoreD2
             context['scorer2'] = report.scoreR2
-            context['hasbtn'] = True
             context['author'] = report.author
-            context['department'] = report.author.department
-            return render(request, 'editReport42.html', context)
+            context['department'] = report.author.get_department_display()
+            return render(request, 'editReportme.html', context)
         else:
             whenErrorHappens(request, u'无操作权限')
-
-
-
-
-
+    elif report.status == Report.STATUS_RETURNBYMANAGER:
+        if imauthor:
+            reportForm = {
+                'scoreL': report.scoreL1,
+                'scoreS': report.scoreS1,
+                'scoreD': report.scoreD1,
+                'scoreR': report.scoreR1,
+            }
+            context['reportForm'] = reportForm
+            context['hasbtn'] = False
+            return render(request, 'editReportwr.html', context)
+        if imleader:
+            reportForm = forms.ReportForm({
+                'scoreL': report.scoreL2,
+                'scoreS': report.scoreS2,
+                'scoreD': report.scoreD2,
+                'scoreR': report.scoreR2,
+            })
+            context['reportForm'] = reportForm
+            context['scorel1'] = report.scoreL1
+            context['scores1'] = report.scoreS1
+            context['scored1'] = report.scoreD1
+            context['scorer1'] = report.scoreR1
+            context['author'] = report.author
+            return render(request, 'editReportle.html', context)
+        if immanager:
+            context['scorel1'] = report.scoreL1
+            context['scores1'] = report.scoreS1
+            context['scored1'] = report.scoreD1
+            context['scorer1'] = report.scoreR1
+            context['scorel2'] = report.scoreL2
+            context['scores2'] = report.scoreS2
+            context['scored2'] = report.scoreD2
+            context['scorer2'] = report.scoreR2
+            context['scorel3'] = report.scoreL3
+            context['scores3'] = report.scoreS3
+            context['scored3'] = report.scoreD3
+            context['scorer3'] = report.scoreR3
+            context['author'] = report.author
+            context['department'] = report.author.get_department_display()
+            return render(request, 'editReportmr.html', context)
 
     return redirect(reverse('main:home'))
 
@@ -262,8 +272,21 @@ def editReport(request,reportid):
 
 
 
+def checkMyRole(profile,author):
+    imauthor = False
+    if profile.pk == author.pk:
+        imauthor = True
 
+    imleader = False
+    if profile.userRole == Profile.LEADER:
+        if profile.department == author.department:
+            imleader = True
 
+    immanager = False
+    if profile.userRole == Profile.MANAGER:
+        immanager = True
+
+    return imauthor,imleader,immanager
 
 
 
@@ -280,25 +303,41 @@ def saveReport(request,type):
         reportid = request.POST.get('reportid')
         if form.is_valid():
             report= get_object_or_404(Report,pk=int(reportid))
+            imauthor, imleader, immanager = checkMyRole(request.user.profile, report.author)
 
-            if type in [Report.STATUS_INITIAL, Report.STATUS_SUBMITTOLEADER]:
-                if report.status in [Report.STATUS_INITIAL,Report.STATUS_RETURNBYLEADER ]:
-                    report.scoreL1 = form.cleaned_data['scoreL']
-                    report.scoreS1 = form.cleaned_data['scoreS']
-                    report.scoreD1 = form.cleaned_data['scoreD']
-                    report.scoreR1 = form.cleaned_data['scoreR']
+            if imauthor:
+                if type in [Report.STATUS_INITIAL, Report.STATUS_SUBMITTOLEADER]:
+                    if report.status in [Report.STATUS_INITIAL, Report.STATUS_RETURNBYLEADER]:
+                        report.scoreL1 = form.cleaned_data['scoreL']
+                        report.scoreS1 = form.cleaned_data['scoreS']
+                        report.scoreD1 = form.cleaned_data['scoreD']
+                        report.scoreR1 = form.cleaned_data['scoreR']
 
-                    report.status = type
-                    report.save()
-            if type in [Report.STATUS_LEADERCHECK,Report.STATUS_SUBMITTOMANAGER]:
-                if report.status in [Report.STATUS_LEADERCHECK,Report.STATUS_RETURNBYMANAGER]:
-                    report.scoreL2 = form.cleaned_data['scoreL']
-                    report.scoreS2 = form.cleaned_data['scoreS']
-                    report.scoreD2 = form.cleaned_data['scoreD']
-                    report.scoreR2 = form.cleaned_data['scoreR']
+                        report.status = type
+                        report.save()
 
-                    report.status = type
-                    report.save()
+            elif imleader:
+                if type in [Report.STATUS_LEADERCHECK, Report.STATUS_SUBMITTOMANAGER]:
+                    if report.status in [Report.STATUS_LEADERCHECK, Report.STATUS_RETURNBYMANAGER]:
+                        report.scoreL2 = form.cleaned_data['scoreL']
+                        report.scoreS2 = form.cleaned_data['scoreS']
+                        report.scoreD2 = form.cleaned_data['scoreD']
+                        report.scoreR2 = form.cleaned_data['scoreR']
+
+                        report.status = type
+                        report.save()
+
+            elif immanager:
+                if type in [Report.STATUS_MANAGERCHECK, Report.STATUS_ARCHIVED]:
+                    if report.status in [Report.STATUS_MANAGERCHECK]:
+                        report.scoreL3 = form.cleaned_data['scoreL']
+                        report.scoreS3 = form.cleaned_data['scoreS']
+                        report.scoreD3 = form.cleaned_data['scoreD']
+                        report.scoreR3 = form.cleaned_data['scoreR']
+
+                        report.status = type
+                        report.save()
+
 
     return redirect(reverse('main:home'))
 
@@ -322,25 +361,27 @@ def retrieveReport(request):
                 report.save()
             elif status == Report.STATUS_LEADERCHECK:
                 report.status = Report.STATUS_RETURNBYLEADER
+                report.scoreL2 = 0
+                report.scoreS2 = 0
+                report.scoreD2 = 0
+                report.scoreR2 = 0
                 report.save()
         elif profile.userRole==Profile.MANAGER:
             if status == Report.STATUS_MANAGERCHECK:
                 report.status = Report.STATUS_RETURNBYMANAGER
+                report.scoreL3 = 0
+                report.scoreS3 = 0
+                report.scoreD3 = 0
+                report.scoreR3 = 0
                 report.save()
 
     return redirect(reverse('main:home'))
 
 
-# def withdrawReport(request,aa):
-#     return redirect(reverse('main:home'))
-
-# def getReports(request,type):
-#     template_name = 'reportList.html'
-
 # @login_required
 class ReportList(ListView):
     model = Report
-    template_name = 'reportList.html'
+    template_name = 'reportListw.html'
     context_object_name = 'report_list'
 
     def get_queryset(self):
@@ -352,14 +393,14 @@ class ReportList(ListView):
 
             if self.imauthor == u'1':
                 reports = profile.reports.filter(status=type)
-                self.template_name = 'reportList.html'
+                self.template_name = 'reportListw.html'
                 return reports
             else:
                 if profile.userRole==Profile.LEADER:
                     if type != Report.STATUS_INITIAL and type != Report.STATUS_ARCHIVED:
                         reports = Report.objects.filter(author__department=profile.department
                                                      ).filter(status=type)
-                        self.template_name = 'reportList1.html'
+                        self.template_name = 'reportListl.html'
                         return reports
                     else:
                         return None
@@ -371,7 +412,7 @@ class ReportList(ListView):
                 if type in [Report.STATUS_SUBMITTOMANAGER,Report.STATUS_MANAGERCHECK,Report.STATUS_RETURNBYMANAGER]:
                     reports = Report.objects.filter(author__department=dept
                                                     ).filter(status=type)
-                    self.template_name = 'reportList2.html'
+                    self.template_name = 'reportListm.html'
                     return reports
                 else:
                     return None
@@ -422,7 +463,7 @@ def ajaxedittask(request):
     tasks = report.tasks.filter(type=tasktype)
     template_name = 'tasks.html'
     # request.session['reportid'] = report.pk
-    response = render(request,template_name,{'tasks':tasks})
+    response = render(request,template_name,{'tasks':tasks,'taskEditable':True})
     # this cookie kv will be deleted in the js
     response.set_cookie('tasktype',tasktype)
     return response
@@ -441,7 +482,7 @@ def ajaxdeletetask(request):
 
     tasks = report.tasks.filter(type=tasktype)
 
-    response = render(request, template_name, {'tasks': tasks})
+    response = render(request, template_name, {'tasks': tasks,'taskEditable':True})
     #this cookie kv will be deleted in the js
     response.set_cookie('tasktype', tasktype)
     return response

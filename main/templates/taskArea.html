@@ -1,0 +1,64 @@
+{% load myfiltertag %}
+
+<div>
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active"><a href="#partLong" aria-controls="partLong" role="tab" data-toggle="tab">长期项目</a></li>
+        <li role="presentation"><a href="#partShort" aria-controls="partShort" role="tab" data-toggle="tab">短期项目</a></li>
+        <li role="presentation"><a href="#partDaily" aria-controls="partDaily" role="tab" data-toggle="tab">日常运维</a></li>
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="partLong">
+            <div class="panel panel-default">
+                <!-- Table -->
+                <table class="table table-bordered" style="table-layout:fixed;">
+                    <thead>
+                    <tr>
+                        <th style="width:50%">任务描述</th>
+                        <th style="width:50%">完成内容</th>
+                    </tr>
+                    </thead>
+                    <tbody id="taskareaL" class="taskarea">
+                    {% show_tasks tasksL False%}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div role="tabpanel" class="tab-pane" id="partShort">
+            <div class="panel panel-default">
+                <!-- Table -->
+                <table class="table table-bordered" style="{table-layout:fixed;}">
+                    <thead>
+                    <tr>
+                        <th style="width:50%">任务描述</th>
+                        <th style="width:50%">完成内容</th>
+                    </tr>
+                    </thead>
+                    <tbody id="taskareaS" class="taskarea">
+                    {% show_tasks tasksS False %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div role="tabpanel" class="tab-pane" id="partDaily">
+            <div class="panel panel-default">
+                <!-- Table -->
+                <table class="table table-bordered" style="{table-layout:fixed;}">
+                    <thead>
+                    <tr>
+                        <th style="width:50%">任务描述</th>
+                        <th style="width:50%">完成内容</th>
+                    </tr>
+                    </thead>
+                    <tbody id="taskareaD" class="taskarea">
+                    {% show_tasks tasksD False %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,55 @@
+{% extends 'jumbotron_base.html' %}
+
+{% block title %}Edit Report WR{% endblock %}
+
+{%block maincontent %}
+
+{% include 'reportTitlew.html' %}
+
+{% include 'taskArea.html' %}
+
+
+<form action="{% url 'main:retrieveReport' %}" role="form"  method="POST">
+    <fieldset>
+        {% csrf_token %}
+        <input type="hidden" id="reportid" name="reportid" value={{reportid}}>
+
+        <table class="table table-bordered" style="{table-layout:fixed;}">
+            <thead>
+            <tr>
+                <th style="width:20%">指标名称</th>
+                <th style="width:60%">计分规则</th>
+                <th style="width:20%">自评分数</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>长期项目研发</td>
+                <td>基准30,最高35</td>
+                <td>{{reportForm.scoreL}}</td>
+            </tr>
+            <tr>
+                <td>短期研发测试</td>
+                <td>基准25,最高30</td>
+                <td>{{reportForm.scoreS}}</td>
+            </tr>
+            <tr>
+                <td>日常运维支撑</td>
+                <td>基准25,最高30</td>
+                <td>{{reportForm.scoreD}}</td>
+            </tr>
+            <tr>
+                <td>日常行为规范</td>
+                <td>达到5分</td>
+                <td>{{reportForm.scoreR}}</td>
+            </tr>
+            </tbody>
+        </table>
+        {% if hasbtn %}
+        <input type="submit"  value="撤回">
+        {% endif %}
+    </fieldset>
+</form>
+
+{% endblock %}
+
