@@ -113,25 +113,25 @@ def editReport(request,reportid):
 
     if report.status == Report.STATUS_INITIAL:
         if imauthor:
-            reportForm = forms.ReportForm({
-                'scoreL': report.scoreL1,
-                'scoreS': report.scoreS1,
-                'scoreD': report.scoreD1,
-                'scoreR': report.scoreR1,
-            })
-            context['reportForm']=reportForm
+            # reportForm = forms.ReportForm({
+            #     'scoreL': report.scoreL1,
+            #     'scoreS': report.scoreS1,
+            #     'scoreD': report.scoreD1,
+            #     'scoreR': report.scoreR1,
+            # })
+            # context['reportForm']=reportForm
             return render(request, 'editReportwe.html', context)
         else:
             whenErrorHappens(request, u'无操作权限')
     elif report.status in [Report.STATUS_SUBMITTOLEADER, Report.STATUS_LEADERCHECK]:
         if imauthor:
-            reportForm = {
-                'scoreL': report.scoreL1,
-                'scoreS': report.scoreS1,
-                'scoreD': report.scoreD1,
-                'scoreR': report.scoreR1,
-            }
-            context['reportForm'] = reportForm
+            # reportForm = {
+            #     'scoreL': report.scoreL1,
+            #     'scoreS': report.scoreS1,
+            #     'scoreD': report.scoreD1,
+            #     'scoreR': report.scoreR1,
+            # }
+            # context['reportForm'] = reportForm
             context['hasbtn']= report.status == Report.STATUS_SUBMITTOLEADER
             return render(request, 'editReportwr.html', context)
         elif imleader:
@@ -145,29 +145,29 @@ def editReport(request,reportid):
                 'scoreR': report.scoreR2,
             })
             context['reportForm'] = reportForm
-            context['scorel1']=report.scoreL1
-            context['scores1'] = report.scoreS1
-            context['scored1'] = report.scoreD1
-            context['scorer1'] = report.scoreR1
+            # context['scorel1']=report.scoreL1
+            # context['scores1'] = report.scoreS1
+            # context['scored1'] = report.scoreD1
+            # context['scorer1'] = report.scoreR1
             context['author'] = report.author
             return render(request, 'editReportle.html',context)
         else:
             whenErrorHappens(request, u'无操作权限')
     elif report.status == Report.STATUS_RETURNBYLEADER:
         if imauthor:
-            reportForm = forms.ReportForm({
-                'scoreL': report.scoreL1,
-                'scoreS': report.scoreS1,
-                'scoreD': report.scoreD1,
-                'scoreR': report.scoreR1,
-            })
-            context['reportForm'] = reportForm
+            # reportForm = forms.ReportForm({
+            #     'scoreL': report.scoreL1,
+            #     'scoreS': report.scoreS1,
+            #     'scoreD': report.scoreD1,
+            #     'scoreR': report.scoreR1,
+            # })
+            # context['reportForm'] = reportForm
             return render(request, 'editReportwe.html', context)
         elif imleader:
-            context['scorel1'] = report.scoreL1
-            context['scores1'] = report.scoreS1
-            context['scored1'] = report.scoreD1
-            context['scorer1'] = report.scoreR1
+            # context['scorel1'] = report.scoreL1
+            # context['scores1'] = report.scoreS1
+            # context['scored1'] = report.scoreD1
+            # context['scorer1'] = report.scoreR1
             context['scorel2'] = report.scoreL2
             context['scores2'] = report.scoreS2
             context['scored2'] = report.scoreD2
@@ -179,20 +179,20 @@ def editReport(request,reportid):
             whenErrorHappens(request, u'无操作权限')
     elif report.status in [Report.STATUS_SUBMITTOMANAGER, Report.STATUS_MANAGERCHECK]:
         if imauthor:
-            reportForm = {
-                'scoreL': report.scoreL1,
-                'scoreS': report.scoreS1,
-                'scoreD': report.scoreD1,
-                'scoreR': report.scoreR1,
-            }
-            context['reportForm'] = reportForm
+            # reportForm = {
+            #     'scoreL': report.scoreL1,
+            #     'scoreS': report.scoreS1,
+            #     'scoreD': report.scoreD1,
+            #     'scoreR': report.scoreR1,
+            # }
+            # context['reportForm'] = reportForm
             context['hasbtn'] = False
             return render(request, 'editReportwr.html', context)
         elif imleader:
-            context['scorel1'] = report.scoreL1
-            context['scores1'] = report.scoreS1
-            context['scored1'] = report.scoreD1
-            context['scorer1'] = report.scoreR1
+            # context['scorel1'] = report.scoreL1
+            # context['scores1'] = report.scoreS1
+            # context['scored1'] = report.scoreD1
+            # context['scorer1'] = report.scoreR1
             context['scorel2'] = report.scoreL2
             context['scores2'] = report.scoreS2
             context['scored2'] = report.scoreD2
@@ -211,10 +211,10 @@ def editReport(request,reportid):
                 'scoreR': report.scoreR3,
             })
             context['reportForm'] = reportForm
-            context['scorel1'] = report.scoreL1
-            context['scores1'] = report.scoreS1
-            context['scored1'] = report.scoreD1
-            context['scorer1'] = report.scoreR1
+            # context['scorel1'] = report.scoreL1
+            # context['scores1'] = report.scoreS1
+            # context['scored1'] = report.scoreD1
+            # context['scorer1'] = report.scoreR1
             context['scorel2'] = report.scoreL2
             context['scores2'] = report.scoreS2
             context['scored2'] = report.scoreD2
@@ -226,13 +226,13 @@ def editReport(request,reportid):
             whenErrorHappens(request, u'无操作权限')
     elif report.status == Report.STATUS_RETURNBYMANAGER:
         if imauthor:
-            reportForm = {
-                'scoreL': report.scoreL1,
-                'scoreS': report.scoreS1,
-                'scoreD': report.scoreD1,
-                'scoreR': report.scoreR1,
-            }
-            context['reportForm'] = reportForm
+            # reportForm = {
+            #     'scoreL': report.scoreL1,
+            #     'scoreS': report.scoreS1,
+            #     'scoreD': report.scoreD1,
+            #     'scoreR': report.scoreR1,
+            # }
+            # context['reportForm'] = reportForm
             context['hasbtn'] = False
             return render(request, 'editReportwr.html', context)
         if imleader:
@@ -243,17 +243,17 @@ def editReport(request,reportid):
                 'scoreR': report.scoreR2,
             })
             context['reportForm'] = reportForm
-            context['scorel1'] = report.scoreL1
-            context['scores1'] = report.scoreS1
-            context['scored1'] = report.scoreD1
-            context['scorer1'] = report.scoreR1
+            # context['scorel1'] = report.scoreL1
+            # context['scores1'] = report.scoreS1
+            # context['scored1'] = report.scoreD1
+            # context['scorer1'] = report.scoreR1
             context['author'] = report.author
             return render(request, 'editReportle.html', context)
         if immanager:
-            context['scorel1'] = report.scoreL1
-            context['scores1'] = report.scoreS1
-            context['scored1'] = report.scoreD1
-            context['scorer1'] = report.scoreR1
+            # context['scorel1'] = report.scoreL1
+            # context['scores1'] = report.scoreS1
+            # context['scored1'] = report.scoreD1
+            # context['scorer1'] = report.scoreR1
             context['scorel2'] = report.scoreL2
             context['scores2'] = report.scoreS2
             context['scored2'] = report.scoreD2
@@ -301,22 +301,18 @@ def saveReport(request,type):
     if request.method == 'POST':
         form = forms.ReportForm(request.POST)
         reportid = request.POST.get('reportid')
+
+        report = get_object_or_404(Report, pk=int(reportid))
+        imauthor, imleader, immanager = checkMyRole(request.user.profile, report.author)
+
+        if imauthor:
+            if type in [Report.STATUS_INITIAL, Report.STATUS_SUBMITTOLEADER]:
+                if report.status in [Report.STATUS_INITIAL, Report.STATUS_RETURNBYLEADER]:
+                    report.status = type
+                    report.save()
+
         if form.is_valid():
-            report= get_object_or_404(Report,pk=int(reportid))
-            imauthor, imleader, immanager = checkMyRole(request.user.profile, report.author)
-
-            if imauthor:
-                if type in [Report.STATUS_INITIAL, Report.STATUS_SUBMITTOLEADER]:
-                    if report.status in [Report.STATUS_INITIAL, Report.STATUS_RETURNBYLEADER]:
-                        report.scoreL1 = form.cleaned_data['scoreL']
-                        report.scoreS1 = form.cleaned_data['scoreS']
-                        report.scoreD1 = form.cleaned_data['scoreD']
-                        report.scoreR1 = form.cleaned_data['scoreR']
-
-                        report.status = type
-                        report.save()
-
-            elif imleader:
+            if imleader:
                 if type in [Report.STATUS_LEADERCHECK, Report.STATUS_SUBMITTOMANAGER]:
                     if report.status in [Report.STATUS_LEADERCHECK, Report.STATUS_RETURNBYMANAGER]:
                         report.scoreL2 = form.cleaned_data['scoreL']
@@ -341,7 +337,7 @@ def saveReport(request,type):
 
     return redirect(reverse('main:home'))
 
-#only change status, not the content,used for 1-0,3-2
+#only change status, not the content,used for 1-0,3-2,7-6
 def retrieveReport(request):
     if request.method == 'POST':
         reportid = request.POST.get('reportid')
@@ -359,7 +355,7 @@ def retrieveReport(request):
             if status == Report.STATUS_SUBMITTOMANAGER:
                 report.status = Report.STATUS_LEADERCHECK
                 report.save()
-            elif status == Report.STATUS_LEADERCHECK:
+            elif status == Report.STATUS_LEADERCHECK or status == Report.STATUS_RETURNBYMANAGER:
                 report.status = Report.STATUS_RETURNBYLEADER
                 report.scoreL2 = 0
                 report.scoreS2 = 0
@@ -392,7 +388,10 @@ class ReportList(ListView):
             self.imauthor = self.kwargs['imauthor']
 
             if self.imauthor == u'1':
-                reports = profile.reports.filter(status=type)
+                if type == u'11':
+                    reports = profile.reports.filter(status__in=[u'2', u'3', u'4', u'7'])
+                else:
+                    reports = profile.reports.filter(status=type)
                 self.template_name = 'reportListw.html'
                 return reports
             else:
@@ -422,13 +421,34 @@ class ReportList(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(ReportList, self).get_context_data(**kwargs)
-        context['title'] = Report.STATUS[int(self.args[0])][1]
+
+        ima = False
+        if self.kwargs.has_key('imauthor'):
+            if self.kwargs['imauthor']=='1':
+                ima =True
+        # ima = self.imauthor
+
+        if ima:
+            if self.args[0] == '0':
+                context['title'] = u'未提交'
+            elif self.args[0] == '1':
+                context['title'] = u'已提交'
+            elif self.args[0] in ['2', '3', '4']:
+                context['title'] = u'审核中'
+            elif self.args[0] == '5':
+                context['title'] = u'已归档'
+            elif self.args[0] in ['6', '7']:
+                context['title'] = u'被退回'
+        else:
+            context['title'] = Report.STATUS[int(self.args[0])][1]
+
         return context
 
 
+def historyView(request):
+    template_name = 'history.html'
 
-
-
+    return render(request, template_name)
 
 
 
@@ -486,6 +506,17 @@ def ajaxdeletetask(request):
     #this cookie kv will be deleted in the js
     response.set_cookie('tasktype', tasktype)
     return response
+
+
+
+def ajaxgetreports(request):
+    template_name = 'reportListh.html'
+    month = request.POST['month']
+    dt = datetime.datetime.strptime(month, "%Y-%m")
+    date = datetime.date(dt.year,dt.month,1)
+    reports = Report.objects.filter(status=Report.STATUS_ARCHIVED).filter(month=date)
+
+    return render(request, template_name,{'report_list':reports})
 
 
 

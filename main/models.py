@@ -22,8 +22,8 @@ class Report(models.Model):
         (STATUS_SUBMITTOMANAGER, u'已提交部门'),
         (STATUS_MANAGERCHECK, u'部门审核中'),
         (STATUS_ARCHIVED, u'已存档'),
-        (STATUS_RETURNBYLEADER, u'退回'),
-        (STATUS_RETURNBYMANAGER, u'退回'),
+        (STATUS_RETURNBYLEADER, u'退回员工'),
+        (STATUS_RETURNBYMANAGER, u'退回科室'),
     )
     month=models.DateField(verbose_name=u'报告期号', db_index=True)
     status=models.CharField(
@@ -33,24 +33,24 @@ class Report(models.Model):
     )
     author=models.ForeignKey(acModels.Profile,related_name='reports')
 
-    scoreL1 = models.IntegerField(verbose_name=u'长期项目自评分', default=0)
+    #scoreL1 = models.IntegerField(verbose_name=u'长期项目自评分', default=0)
     scoreL2 = models.IntegerField(verbose_name=u'长期项目科评分', default=0)
     scoreL3 = models.IntegerField(verbose_name=u'长期项目部评分', default=0)
 
-    scoreS1 = models.IntegerField(verbose_name=u'短期项目自评分', default=0)
+    #scoreS1 = models.IntegerField(verbose_name=u'短期项目自评分', default=0)
     scoreS2 = models.IntegerField(verbose_name=u'短期项目科评分', default=0)
     scoreS3 = models.IntegerField(verbose_name=u'短期项目部评分', default=0)
 
-    scoreD1 = models.IntegerField(verbose_name=u'日常项目自评分', default=0)
+    #scoreD1 = models.IntegerField(verbose_name=u'日常项目自评分', default=0)
     scoreD2 = models.IntegerField(verbose_name=u'日常项目科评分', default=0)
     scoreD3 = models.IntegerField(verbose_name=u'日常项目部评分', default=0)
 
-    scoreR1 = models.IntegerField(verbose_name=u'行为规范自评分', default=0)
+    #scoreR1 = models.IntegerField(verbose_name=u'行为规范自评分', default=0)
     scoreR2 = models.IntegerField(verbose_name=u'行为规范科评分', default=0)
     scoreR3 = models.IntegerField(verbose_name=u'行为规范部评分', default=0)
 
-    def getSum1(self):
-        return self.scoreL1+self.scoreS1+self.scoreD1+self.scoreR1
+    # def getSum1(self):
+    #     return self.scoreL1+self.scoreS1+self.scoreD1+self.scoreR1
 
     def getSum2(self):
         return self.scoreL2+self.scoreS2+self.scoreD2+self.scoreR2
@@ -59,7 +59,7 @@ class Report(models.Model):
         return self.scoreL3+self.scoreS3+self.scoreD3+self.scoreR3
 
     def getSumAll(self):
-        return self.getSum1()+self.getSum2()+self.getSum3()
+        return self.getSum2()+self.getSum3()
 
 
 class Task(models.Model):

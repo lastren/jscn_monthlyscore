@@ -11,20 +11,12 @@
         <thead>
             <tr>
                 <th style="width:20%;text-align:center">月份</th>
-                <th style="width:20%;text-align:center">长期项目</th>
-                <th style="width:20%;text-align:center">短期项目</th>
-                <th style="width:20%;text-align:center">日常运维</th>
-                <th style="width:20%;text-align:center">行为规范</th>
             </tr>
         </thead>
         <tbody>
             {% for report in report_list %}
             <tr>
                 <td><a href="{% url 'main:editReport' report.pk %}">{{report.month|date:'Y-m' }}</a></td>
-                <td>{{report.scoreL1}}</td>
-                <td>{{report.scoreS1}}</td>
-                <td>{{report.scoreD1}}</td>
-                <td>{{report.scoreR1}}</td>
             </tr>
             {% endfor %}
         </tbody>

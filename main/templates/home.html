@@ -4,7 +4,7 @@
 
 {%block maincontent %}
 
-{% if request.session.userrole != 'manager' %}
+{% if request.session.userrole != 'manager' and request.session.userrole != 'leader' %}
     {% if newbtn %}
         <a href="{% url 'main:addReport' %}" class="btn btn-lg btn-default">Add Report</a>
     {% endif %}
