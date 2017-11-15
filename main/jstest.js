@@ -20,3 +20,14 @@ $(document).ready(function(){
 
 });
 
+$('#toexcelbtn').click(function(){
+        var month = $('#datetimepicker').val();
+        if(month != ''){
+           $.post("{% url 'main:toexcel' %}",{
+            'month':month
+            },
+            function(data,status){
+                console.log('done')
+            });
+        }
+    });

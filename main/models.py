@@ -59,7 +59,7 @@ class Report(models.Model):
         return self.scoreL3+self.scoreS3+self.scoreD3+self.scoreR3
 
     def getSumAll(self):
-        return self.getSum2()+self.getSum3()
+        return self.getSum2() * 0.5+self.getSum3()*0.5
 
 
 class Task(models.Model):

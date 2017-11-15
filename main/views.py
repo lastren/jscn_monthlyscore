@@ -14,9 +14,15 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from django.views.generic import ListView
 from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+import xlwt
+from utils import FitSheetWrapper
+from django.http import HttpResponse
+import StringIO
 
 # Create your views here.
 # Create your views here.
+@login_required
 def homeView(request):
     template_name = 'home.html'
 
@@ -61,7 +67,7 @@ def getNewMonth(account):
     else:
         return None
 
-
+@login_required
 def addReport(request):
     errResponse = redirect(reverse('main:home'))
     template_name = 'editReportwe.html'
@@ -91,6 +97,7 @@ def addReport(request):
         'reportmonth':report.month
     })
 
+@login_required
 def editReport(request,reportid):
     report = get_object_or_404(Report,pk=int(reportid))
 
@@ -101,7 +108,6 @@ def editReport(request,reportid):
     tasksD = report.tasks.filter(type=u'3')
 
     context={
-                # 'reportForm': reportForm,
                 'reportmonth': report.month,
                 'reportid': reportid,
                 'tasksL': tasksL,
@@ -258,13 +264,27 @@ def editReport(request,reportid):
             context['scores2'] = report.scoreS2
             context['scored2'] = report.scoreD2
             context['scorer2'] = report.scoreR2
-            context['scorel3'] = report.scoreL3
-            context['scores3'] = report.scoreS3
-            context['scored3'] = report.scoreD3
-            context['scorer3'] = report.scoreR3
+            # context['scorel3'] = report.scoreL3
+            # context['scores3'] = report.scoreS3
+            # context['scored3'] = report.scoreD3
+            # context['scorer3'] = report.scoreR3
             context['author'] = report.author
             context['department'] = report.author.get_department_display()
             return render(request, 'editReportmr.html', context)
+    elif report.status == Report.STATUS_ARCHIVED:
+        context['scorel2'] = report.scoreL2
+        context['scores2'] = report.scoreS2
+        context['scored2'] = report.scoreD2
+        context['scorer2'] = report.scoreR2
+        context['scorel3'] = report.scoreL3
+        context['scores3'] = report.scoreS3
+        context['scored3'] = report.scoreD3
+        context['scorer3'] = report.scoreR3
+        context['sum'] = report.getSumAll()
+        context['author'] = report.author
+        context['department'] = report.author.get_department_display()
+        return render(request, 'editReporth.html', context)
+
 
     return redirect(reverse('main:home'))
 
@@ -297,6 +317,7 @@ def whenErrorHappens(request,errStr):
     return errResponse
 
 
+@login_required
 def saveReport(request,type):
     if request.method == 'POST':
         form = forms.ReportForm(request.POST)
@@ -338,6 +359,7 @@ def saveReport(request,type):
     return redirect(reverse('main:home'))
 
 #only change status, not the content,used for 1-0,3-2,7-6
+@login_required
 def retrieveReport(request):
     if request.method == 'POST':
         reportid = request.POST.get('reportid')
@@ -374,11 +396,14 @@ def retrieveReport(request):
     return redirect(reverse('main:home'))
 
 
-# @login_required
 class ReportList(ListView):
     model = Report
     template_name = 'reportListw.html'
     context_object_name = 'report_list'
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(ReportList, self).dispatch(*args, **kwargs)
 
     def get_queryset(self):
         type = self.args[0]
@@ -444,7 +469,7 @@ class ReportList(ListView):
 
         return context
 
-
+@login_required
 def historyView(request):
     template_name = 'history.html'
 
@@ -518,6 +543,39 @@ def ajaxgetreports(request):
 
     return render(request, template_name,{'report_list':reports})
 
+@login_required
+def toexcel(request):
+    month = request.POST['month']
+
+    if month !='':
+        dt = datetime.datetime.strptime(month, "%Y-%m")
+        date = datetime.date(dt.year, dt.month, 1)
+        reports = Report.objects.filter(status=Report.STATUS_ARCHIVED).filter(month=date)
+
+        titles = (u'科室',u'姓名',u'科室评分',u'部门评分',u'总分',)
+        file = xlwt.Workbook(encoding='utf8')
+        #table = FitSheetWrapper.FitSheetWrapper(file.add_sheet('sheet1'))
+        table = file.add_sheet('sheet1')
+        for i, e in enumerate(titles):
+            table.write(0, i, e)
+        row = 1
+        for report in reports:
+            table.write(row,0,report.author.get_department_display())
+            table.write(row,1,report.author.displayName)
+            table.write(row,2,toStr(report.getSum2()))
+            table.write(row,3,toStr(report.getSum3()))
+            table.write(row,4,toStr(report.getSumAll()))
+            row = row+1
+
+        response = HttpResponse(content_type='application/vnd.ms-excel')
+        response['Content-Disposition'] = 'attachment; filename=scorelist.xls'
+        file.save(response)
+        return response
+    else:
+        pass
 
 
-
+# 解决excel表中输出None的问题
+def toStr(s):
+    s = str(s) if s != None else u''
+    return s

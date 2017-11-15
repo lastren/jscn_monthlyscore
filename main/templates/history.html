@@ -13,9 +13,16 @@
 
 {%block maincontent %}
 
-<label>报告月份：</label><input type="text" id="datetimepicker" readonly>
+<form action="{% url 'main:toexcel' %}" role="form"  method="POST">
+    {% csrf_token %}
+<label>报告月份：</label><input type="text" id="datetimepicker" readonly name="month" required>
+<br>
+<br>
+    <input class="btn btn-default" type="submit" value="导出到excel" id="toexcelbtn">
+</form>
 
-
+<br>
+<br>
 <div id="reportlistarea"></div>
 
 
@@ -26,7 +33,7 @@
 
 {% load static %}
 <script type="text/javascript" src="{% static 'js/bootstrap-datetimepicker.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'js/bootstrap-datetimepicker.zh-CN.js' %}" charset="UTF-8"></script>
+<script type="text/javascript" src="{% static 'js/locales/bootstrap-datetimepicker.zh-CN.js' %}" charset="UTF-8"></script>
 
 {% endblock %}
 
@@ -41,12 +48,18 @@ $(document).ready(function(){
 
     $('#datetimepicker').datetimepicker({
         language:'zh-CN',
-        format:"yyyy-mm",
+        format:'yyyy-mm',
         autoclose: true,
         startView:3,
-        minView:3
+        minView:3,
+        startDate:new Date('2017-1-1')
     }).on('changeDate', function(ev){
-        console.log($('#datetimepicker').val());
+        if($('#datetimepicker').val()==''){
+            $('#toexcelbtn').attr('disabled',true)
+        }else{
+            $('#toexcelbtn').attr('disabled',false)
+        }
+
          $.post("{% url 'main:ajaxgetreports' %}",{
             'month':$('#datetimepicker').val()
             },
@@ -54,6 +67,7 @@ $(document).ready(function(){
                 $("#reportlistarea").html(data);
             });
         });
+
 
 });
 

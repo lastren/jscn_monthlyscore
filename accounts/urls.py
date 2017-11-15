@@ -7,6 +7,7 @@ app_name = 'accounts'
 urlpatterns = [
     url(r'^login/$', views.loginView, name='login'),
     url(r'^logout/$', views.logoutView, name='logout'),
+    url(r'^changepw/$', views.changePwView, name='changepw'),
     #url(r'^profile/$', views.profileView, name='profile'),
 
     # login_required认证失败跳转

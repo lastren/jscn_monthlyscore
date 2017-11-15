@@ -9,7 +9,7 @@
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
 
-    <title>月评分系统登录</title>
+    <title>修改密码</title>
 
     {% load static %}
     <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon.ico' %}">
@@ -32,16 +32,14 @@
   <body>
 
     <div class="container">
-      <form class="form-signin" action="{% url 'accounts:login'  %}"  role="form"  method="POST">
+      <form class="form-signin" action="{% url 'accounts:changepw'  %}"  role="form"  method="POST">
           {% csrf_token %}
-        <h2 class="form-signin-heading">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;月评分系统登录</h2>
-        <label for="id_username" class="sr-only">用户名</label>
-        <input type="text" class="form-control" placeholder="用户名" required autofocus name="username" id="id_username" maxlength="20">
-        <br>
-        <label for="id_password" class="sr-only">密码</label>
-        <input type="password" id="id_password" class="form-control" placeholder="密码" required name="password" maxlength="256">
-        <br>
-        <button class="btn btn-lg btn-primary btn-block" type="submit">登录</button>
+        <h2 class="form-signin-heading">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;修改密码</h2>
+        <label for="id_old_password" class="sr-only">原密码</label>
+        <input type="password" id="id_old_password" class="form-control" placeholder="原密码" required name="old_password" maxlength="256">
+        <label for="id_new_password" class="sr-only">新密码</label>
+        <input type="password" id="id_new_password" class="form-control" placeholder="新密码" required name="new_password" maxlength="256">
+        <button class="btn btn-lg btn-primary btn-block" type="submit">修改</button>
       </form>
 
     </div>

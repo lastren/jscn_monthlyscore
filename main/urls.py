@@ -24,4 +24,6 @@ urlpatterns = [
     url(r'^ajaxdeletetask$', views.ajaxdeletetask, name='ajaxdeletetask'),
     url(r'^ajaxgetreports$', views.ajaxgetreports, name='ajaxgetreports'),
 
+    url(r'^toexcel$', views.toexcel, name='toexcel'),
+
 ]
