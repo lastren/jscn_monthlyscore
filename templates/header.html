@@ -1,3 +1,5 @@
+{% load myfiltertag %}
+
 <nav class="navbar">
     <span class="dropdown">
     <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" >
@@ -28,10 +30,10 @@
                 <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                    <li><a href="{% url 'main:getMyReports' 0 %}">未提交</a></li>
-                    <li><a href="{% url 'main:getMyReports' 1 %}">已提交</a></li>
-                    <li><a href="{% url 'main:getMyReports' 11 %}">审核中</a></li>
-                    <li><a href="{% url 'main:getMyReports' 6 %}">被退回</a></li>
+                    <li><a href="{% url 'main:getMyReports' 0 %}">未提交 {% report_num 'w0'%}</a></li>
+                    <li><a href="{% url 'main:getMyReports' 1 %}">已提交 {% report_num 'w1'%}</a></li>
+                    <li><a href="{% url 'main:getMyReports' 11 %}">审核中 {% report_num 'w11'%}</a></li>
+                    <li><a href="{% url 'main:getMyReports' 6 %}">被退回 {% report_num 'w6'%}</a></li>
                 </ul>
             </span>
         </li>
@@ -44,12 +46,12 @@
                 <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenu3">
-                    <li><a href="{% url 'main:getTheirReports' 1 %}">已提交科室</a></li>
-                    <li><a href="{% url 'main:getTheirReports' 2 %}">科室审核中</a></li>
-                    <li><a href="{% url 'main:getTheirReports' 3 %}">已提交部门</a></li>
-                    <li><a href="{% url 'main:getTheirReports' 4 %}">部门审核中</a></li>
-                    <li><a href="{% url 'main:getTheirReports' 6 %}">退回员工</a></li>
-                    <li><a href="{% url 'main:getTheirReports' 7 %}">退回科室</a></li>
+                    <li><a href="{% url 'main:getTheirReports' 1 %}">已提交科室 {% report_num 'l1'%}</a></li>
+                    <li><a href="{% url 'main:getTheirReports' 2 %}">科室审核中 {% report_num 'l2'%}</a></li>
+                    <li><a href="{% url 'main:getTheirReports' 3 %}">已提交部门 {% report_num 'l3'%}</a></li>
+                    <li><a href="{% url 'main:getTheirReports' 4 %}">部门审核中 {% report_num 'l4'%}</a></li>
+                    <li><a href="{% url 'main:getTheirReports' 6 %}">退回员工 {% report_num 'l6'%}</a></li>
+                    <li><a href="{% url 'main:getTheirReports' 7 %}">退回科室 {% report_num 'l7'%}</a></li>
                 </ul>
             </span>
         </li>
@@ -65,9 +67,9 @@
                     <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu">
-                    <li><a href="{% url 'main:getDeptReports' 3 key %}">已提交部门</a></li>
-                    <li><a href="{% url 'main:getDeptReports' 4 key %}">部门审核中</a></li>
-                    <li><a href="{% url 'main:getDeptReports' 7 key %}">退回科室</a></li>
+                    <li><a href="{% url 'main:getDeptReports' 3 key %}">已提交部门 {% report_num 'm3' key %}</a></li>
+                    <li><a href="{% url 'main:getDeptReports' 4 key %}">部门审核中 {% report_num 'm4' key %}</a></li>
+                    <li><a href="{% url 'main:getDeptReports' 7 key %}">退回科室 {% report_num 'm7' key %}</a></li>
                 </ul>
             </span>
         </li>
