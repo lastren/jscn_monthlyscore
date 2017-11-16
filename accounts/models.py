@@ -19,9 +19,9 @@ class Profile(models.Model):
     DP1 = u'1'
     DP2 = u'2'
     DP3 = u'3'
-    DP1NAME = u'科室1'
-    DP2NAME = u'科室2'
-    DP3NAME = u'科室3'
+    DP1NAME = u'技术开发科'
+    DP2NAME = u'IT支撑科'
+    DP3NAME = u'规划发展科'
     DEPARTMENT =(
         (DP0, u''),
         (DP1, DP1NAME),

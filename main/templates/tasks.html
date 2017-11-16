@@ -6,7 +6,7 @@
     <td>
         <div class="btn-group-vertical" role="group">
         <button type="button" class="btn btn-default deletetask" data-tid={{item.id}}>删除</button>
-        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#taskModal" data-tid={{item.id}} data-tdesc={{item.desc}} data-tdone={{item.done}} data-type={{item.type}}>修改</button>
+        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#taskModal" data-tid={{item.id}} data-tdesc='{{item.desc}}' data-tdone='{{item.done}}' data-type={{item.type}}>修改</button>
         </div>
     </td>
     {% endif %}

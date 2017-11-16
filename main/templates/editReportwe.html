@@ -180,8 +180,8 @@ modal.find('#done').val(taskdone)
         var reportid = $('#reportid').val()
 
         var taskid = modal.find('#taskid').val()
-        var taskdesc = modal.find('#desc').val()
-        var taskdone = modal.find('#done').val()
+        var taskdesc = modal.find('#desc').val().trim()
+        var taskdone = modal.find('#done').val().trim()
         var tasktype = modal.find('#tasktype').val()
 
         $.post("{% url 'main:ajaxedittask' %}",{
