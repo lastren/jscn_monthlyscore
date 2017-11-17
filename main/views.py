@@ -459,7 +459,7 @@ class ReportList(ListView):
                 context['title'] = u'未提交'
             elif self.args[0] == '1':
                 context['title'] = u'已提交'
-            elif self.args[0] in ['2', '3', '4']:
+            elif self.args[0] == '11':
                 context['title'] = u'审核中'
             elif self.args[0] == '5':
                 context['title'] = u'已归档'
