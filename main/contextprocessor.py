@@ -6,6 +6,8 @@ from django.http import request
 
 def reportNumContextProc(request):
     if request.user.is_authenticated:
+        if request.user.is_superuser:
+            return{}
         data = getReportNum(request.user)
         return data
     else:

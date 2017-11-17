@@ -542,7 +542,6 @@ def ajaxgetreports(request):
     reports = Report.objects.filter(status=Report.STATUS_ARCHIVED).filter(month=date)
     return render(request, template_name,{'report_list':reports})
 
-
 @login_required
 def toexcel(request):
     month = request.POST['month']
