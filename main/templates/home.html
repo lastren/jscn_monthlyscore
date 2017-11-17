@@ -6,7 +6,7 @@
 
 {% if request.session.userrole != 'manager' and request.session.userrole != 'leader' %}
     {% if newbtn %}
-        <a href="{% url 'main:addReport' %}" class="btn btn-lg btn-default">Add Report</a>
+        <a href="{% url 'main:addReport' %}" class="btn btn-lg btn-default">填写报告</a>
     {% endif %}
 {% endif %}
 
