@@ -35,10 +35,10 @@
       <form class="form-signin" action="{% url 'accounts:changepw'  %}"  role="form"  method="POST">
           {% csrf_token %}
         <h2 class="form-signin-heading">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;修改密码</h2>
-        <label for="id_old_password" class="sr-only">原密码</label>
+          {{form.non_field_errors}}
         <input type="password" id="id_old_password" class="form-control" placeholder="原密码" required name="old_password" maxlength="256">
-        <label for="id_new_password" class="sr-only">新密码</label>
         <input type="password" id="id_new_password" class="form-control" placeholder="新密码" required name="new_password" maxlength="256">
+        <input type="password" id="id_new_password_1" class="form-control" placeholder="重复新密码" required name="new_password_1" maxlength="256">
         <button class="btn btn-lg btn-primary btn-block" type="submit">修改</button>
       </form>
 

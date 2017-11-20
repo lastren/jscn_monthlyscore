@@ -62,22 +62,21 @@ def changePwView(request):
             username = request.session['account']
             old_password = cpf.cleaned_data['old_password']
             new_password = cpf.cleaned_data['new_password']
-            print(old_password)
-            print(new_password)
             ##判断用户原密码是否匹配
             user = authenticate(username=request.user.username, password=old_password)
             if user is not None and user.is_active:
                 user.set_password(new_password)
                 user.save()
 
-                info = '密码修改成功,请重新登录!'
+                info = u'密码修改成功,请重新登录!'
                 messages.info(request, info)
                 return redirect(reverse('accounts:login'))
             else:
-                info = '密码不正确，请重新输入!'
+                info = u'密码不正确，请重新输入!'
                 messages.info(request, info)
                 return redirect(reverse('accounts:changepw'))
-
+        else:
+            return render(request, 'accounts/changepw.html', {'form': cpf})
     else:
         cpf = forms.ChangePwForm()
         return render(request, 'accounts/changepw.html',{'form':cpf})
