@@ -19,19 +19,19 @@ class TaskForm(forms.ModelForm):
         }
 
 class ReportForm(forms.Form):
-    scoreL = forms.IntegerField(
+    scoreL = forms.DecimalField(
         max_value=35,
         min_value=0,
     )
-    scoreS = forms.IntegerField(
+    scoreS = forms.DecimalField(
         max_value=30,
         min_value=0,
     )
-    scoreD = forms.IntegerField(
+    scoreD = forms.DecimalField(
         max_value=30,
         min_value=0,
     )
-    scoreR = forms.IntegerField(
+    scoreR = forms.DecimalField(
         max_value=5,
         min_value=0,
     )

@@ -34,20 +34,20 @@ class Report(models.Model):
     author=models.ForeignKey(acModels.Profile,related_name='reports')
 
     #scoreL1 = models.IntegerField(verbose_name=u'长期项目自评分', default=0)
-    scoreL2 = models.IntegerField(verbose_name=u'长期项目科评分', default=0)
-    scoreL3 = models.IntegerField(verbose_name=u'长期项目部评分', default=0)
+    scoreL2 = models.DecimalField(verbose_name=u'长期项目科评分', default=0,max_digits=3,decimal_places=1)
+    scoreL3 = models.DecimalField(verbose_name=u'长期项目部评分', default=0,max_digits=3,decimal_places=1)
 
     #scoreS1 = models.IntegerField(verbose_name=u'短期项目自评分', default=0)
-    scoreS2 = models.IntegerField(verbose_name=u'短期项目科评分', default=0)
-    scoreS3 = models.IntegerField(verbose_name=u'短期项目部评分', default=0)
+    scoreS2 = models.DecimalField(verbose_name=u'短期项目科评分', default=0,max_digits=3,decimal_places=1)
+    scoreS3 = models.DecimalField(verbose_name=u'短期项目部评分', default=0,max_digits=3,decimal_places=1)
 
     #scoreD1 = models.IntegerField(verbose_name=u'日常项目自评分', default=0)
-    scoreD2 = models.IntegerField(verbose_name=u'日常项目科评分', default=0)
-    scoreD3 = models.IntegerField(verbose_name=u'日常项目部评分', default=0)
+    scoreD2 = models.DecimalField(verbose_name=u'日常项目科评分', default=0,max_digits=3,decimal_places=1)
+    scoreD3 = models.DecimalField(verbose_name=u'日常项目部评分', default=0,max_digits=3,decimal_places=1)
 
     #scoreR1 = models.IntegerField(verbose_name=u'行为规范自评分', default=0)
-    scoreR2 = models.IntegerField(verbose_name=u'行为规范科评分', default=0)
-    scoreR3 = models.IntegerField(verbose_name=u'行为规范部评分', default=0)
+    scoreR2 = models.DecimalField(verbose_name=u'行为规范科评分', default=0,max_digits=3,decimal_places=1)
+    scoreR3 = models.DecimalField(verbose_name=u'行为规范部评分', default=0,max_digits=3,decimal_places=1)
 
     # def getSum1(self):
     #     return self.scoreL1+self.scoreS1+self.scoreD1+self.scoreR1
