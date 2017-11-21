@@ -1,7 +1,7 @@
 {% for item in tasks %}
 <tr>
-    <td style="word-wrap:break-word;word-break:break-all;text-align: left;">{{item.desc}}</td>
-    <td style="word-wrap:break-word;word-break:break-all;text-align: left;">{{item.done}}</td>
+    <td style="word-wrap:break-word;word-break:break-all;text-align: left;">{{item.desc|linebreaksbr}}</td>
+    <td style="word-wrap:break-word;word-break:break-all;text-align: left;">{{item.done|linebreaksbr}}</td>
     {% if taskEditable %}
     <td>
         <div class="btn-group-vertical" role="group">

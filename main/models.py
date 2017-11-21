@@ -63,8 +63,8 @@ class Report(models.Model):
 
 
 class Task(models.Model):
-    desc=models.CharField(verbose_name=u'任务描述',max_length=512,default=u'任务描述')
-    done=models.CharField(verbose_name=u'完成内容',max_length=512,default=u'完成内容')
+    desc=models.CharField(verbose_name=u'任务描述',max_length=2048,default=u'任务描述')
+    done=models.CharField(verbose_name=u'完成内容',max_length=2048,default=u'完成内容')
 
     # startDate = models.DateField(verbose_name=u'起始日期', db_index=True,blank=True,null=True)
     # endDate = models.DateField(verbose_name=u'预计完成日期', db_index=True,blank=True,null=True)
