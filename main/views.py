@@ -92,10 +92,15 @@ def addReport(request):
 
     reportForm = forms.ReportForm()
 
+    reportForm = {
+        'note': report.note1,
+    }
+
     return render(request, template_name, {
         'reportForm': reportForm,
         'reportid':report.pk,
-        'reportmonth':report.month
+        'reportmonth':report.month,
+        'shownote':False
     })
 
 @login_required
@@ -126,7 +131,12 @@ def editReport(request,reportid):
             #     'scoreD': report.scoreD1,
             #     'scoreR': report.scoreR1,
             # })
-            # context['reportForm']=reportForm
+            reportForm = {
+                'note': report.note1,
+            }
+            context['reportForm']=reportForm
+            context['note2']=report.note2
+            context['note3'] = report.note3
             return render(request, 'editReportwe.html', context)
         else:
             whenErrorHappens(request, u'无操作权限')
@@ -139,6 +149,7 @@ def editReport(request,reportid):
             #     'scoreR': report.scoreR1,
             # }
             # context['reportForm'] = reportForm
+            context['note1'] = report.note1
             context['hasbtn']= report.status == Report.STATUS_SUBMITTOLEADER
             return render(request, 'editReportwr.html', context)
         elif imleader:
@@ -150,12 +161,17 @@ def editReport(request,reportid):
                 'scoreS': report.scoreS2,
                 'scoreD': report.scoreD2,
                 'scoreR': report.scoreR2,
+                'note':report.note2,
             })
             context['reportForm'] = reportForm
             # context['scorel1']=report.scoreL1
             # context['scores1'] = report.scoreS1
             # context['scored1'] = report.scoreD1
             # context['scorer1'] = report.scoreR1
+
+            context['note1'] = report.note1
+            context['note3'] = report.note3
+
             context['author'] = report.author
             return render(request, 'editReportle.html',context)
         else:
@@ -168,7 +184,13 @@ def editReport(request,reportid):
             #     'scoreD': report.scoreD1,
             #     'scoreR': report.scoreR1,
             # })
-            # context['reportForm'] = reportForm
+            reportForm = {
+                'note': report.note1,
+            }
+            context['reportForm'] = reportForm
+            context['note2']=report.note2
+            context['note3'] = report.note3
+
             return render(request, 'editReportwe.html', context)
         elif imleader:
             # context['scorel1'] = report.scoreL1
@@ -181,6 +203,12 @@ def editReport(request,reportid):
             context['scorer2'] = report.scoreR2
             context['hasbtn'] = False
             context['author'] = report.author
+
+            context['note1'] = report.note1
+            context['note2'] = report.note2
+            context['note3'] = report.note3
+            context['shownote'] = True
+
             return render(request, 'editReportlr.html', context)
         else:
             whenErrorHappens(request, u'无操作权限')
@@ -193,6 +221,7 @@ def editReport(request,reportid):
             #     'scoreR': report.scoreR1,
             # }
             # context['reportForm'] = reportForm
+            context['note1'] = report.note1
             context['hasbtn'] = False
             return render(request, 'editReportwr.html', context)
         elif imleader:
@@ -206,6 +235,11 @@ def editReport(request,reportid):
             context['scorer2'] = report.scoreR2
             context['hasbtn'] = report.status==Report.STATUS_SUBMITTOMANAGER
             context['author'] = report.author
+
+            context['note1'] = report.note1
+            context['note2'] = report.note2
+            context['shownote'] = False
+
             return render(request, 'editReportlr.html', context)
         elif immanager:
             report.status = Report.STATUS_MANAGERCHECK
@@ -216,6 +250,7 @@ def editReport(request,reportid):
                 'scoreS': report.scoreS3,
                 'scoreD': report.scoreD3,
                 'scoreR': report.scoreR3,
+                'note': report.note3,
             })
             context['reportForm'] = reportForm
             # context['scorel1'] = report.scoreL1
@@ -228,6 +263,10 @@ def editReport(request,reportid):
             context['scorer2'] = report.scoreR2
             context['author'] = report.author
             context['department'] = report.author.get_department_display()
+
+            context['note1'] = report.note1
+            context['note2'] = report.note2
+
             return render(request, 'editReportme.html', context)
         else:
             whenErrorHappens(request, u'无操作权限')
@@ -240,6 +279,7 @@ def editReport(request,reportid):
             #     'scoreR': report.scoreR1,
             # }
             # context['reportForm'] = reportForm
+            context['note1'] = report.note1
             context['hasbtn'] = False
             return render(request, 'editReportwr.html', context)
         if imleader:
@@ -248,12 +288,17 @@ def editReport(request,reportid):
                 'scoreS': report.scoreS2,
                 'scoreD': report.scoreD2,
                 'scoreR': report.scoreR2,
+                'note':report.note2,
             })
             context['reportForm'] = reportForm
             # context['scorel1'] = report.scoreL1
             # context['scores1'] = report.scoreS1
             # context['scored1'] = report.scoreD1
             # context['scorer1'] = report.scoreR1
+
+            context['note1'] = report.note1
+            context['note3'] = report.note3
+
             context['author'] = report.author
             return render(request, 'editReportle.html', context)
         if immanager:
@@ -271,6 +316,11 @@ def editReport(request,reportid):
             # context['scorer3'] = report.scoreR3
             context['author'] = report.author
             context['department'] = report.author.get_department_display()
+
+            context['note1'] = report.note1
+            context['note2'] = report.note2
+            context['note3'] = report.note3
+
             return render(request, 'editReportmr.html', context)
     elif report.status == Report.STATUS_ARCHIVED:
         context['scorel2'] = report.scoreL2
@@ -284,6 +334,11 @@ def editReport(request,reportid):
         context['sum'] = report.getSumAll()
         context['author'] = report.author
         context['department'] = report.author.get_department_display()
+
+        context['note1'] = report.note1
+        context['note2'] = report.note2
+        context['note3'] = report.note3
+
         return render(request, 'editReporth.html', context)
 
 
@@ -327,31 +382,34 @@ def saveReport(request,type):
         report = get_object_or_404(Report, pk=int(reportid))
         imauthor, imleader, immanager = checkMyRole(request.user.profile, report.author)
 
-        if imauthor:
-            if type in [Report.STATUS_INITIAL, Report.STATUS_SUBMITTOLEADER]:
-                if report.status in [Report.STATUS_INITIAL, Report.STATUS_RETURNBYLEADER]:
-                    report.status = type
-                    report.save()
-
         if form.is_valid():
-            if imleader:
-                if type in [Report.STATUS_LEADERCHECK, Report.STATUS_SUBMITTOMANAGER]:
+            if imauthor:
+                if type in [Report.STATUS_INITIAL, Report.STATUS_SUBMITTOLEADER]:
+                    if report.status in [Report.STATUS_INITIAL, Report.STATUS_RETURNBYLEADER]:
+                        report.note1 = form.cleaned_data['note']
+                        report.status = type
+                        report.save()
+            elif imleader:
+                if type in [Report.STATUS_LEADERCHECK, Report.STATUS_SUBMITTOMANAGER,Report.STATUS_RETURNBYLEADER]:
                     if report.status in [Report.STATUS_LEADERCHECK, Report.STATUS_RETURNBYMANAGER]:
                         report.scoreL2 = form.cleaned_data['scoreL']
                         report.scoreS2 = form.cleaned_data['scoreS']
                         report.scoreD2 = form.cleaned_data['scoreD']
                         report.scoreR2 = form.cleaned_data['scoreR']
 
+                        report.note2 = form.cleaned_data['note']
                         report.status = type
                         report.save()
 
             elif immanager:
-                if type in [Report.STATUS_MANAGERCHECK, Report.STATUS_ARCHIVED]:
+                if type in [Report.STATUS_MANAGERCHECK, Report.STATUS_ARCHIVED, Report.STATUS_RETURNBYMANAGER]:
                     if report.status in [Report.STATUS_MANAGERCHECK]:
                         report.scoreL3 = form.cleaned_data['scoreL']
                         report.scoreS3 = form.cleaned_data['scoreS']
                         report.scoreD3 = form.cleaned_data['scoreD']
                         report.scoreR3 = form.cleaned_data['scoreR']
+
+                        report.note3 = form.cleaned_data['note']
 
                         report.status = type
                         report.save()

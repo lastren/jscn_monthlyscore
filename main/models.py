@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from django.db import models
 import accounts.models as acModels
+from decimal import *
 
 # Create your models here.
 class Report(models.Model):
@@ -49,6 +50,10 @@ class Report(models.Model):
     scoreR2 = models.DecimalField(verbose_name=u'行为规范科评分', default=0,max_digits=3,decimal_places=1)
     scoreR3 = models.DecimalField(verbose_name=u'行为规范部评分', default=0,max_digits=3,decimal_places=1)
 
+    note1 = models.CharField(verbose_name=u'加分事由',max_length=2048,default=u'')
+    note2 = models.CharField(verbose_name=u'科室批复', max_length=2048, default=u'')
+    note3 = models.CharField(verbose_name=u'部门批复', max_length=2048, default=u'')
+
     # def getSum1(self):
     #     return self.scoreL1+self.scoreS1+self.scoreD1+self.scoreR1
 
@@ -59,7 +64,7 @@ class Report(models.Model):
         return self.scoreL3+self.scoreS3+self.scoreD3+self.scoreR3
 
     def getSumAll(self):
-        return self.getSum2() * 0.5+self.getSum3()*0.5
+        return self.getSum2() * Decimal.from_float(0.5)+self.getSum3()*Decimal.from_float(0.5)
 
 
 class Task(models.Model):

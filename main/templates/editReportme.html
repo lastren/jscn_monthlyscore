@@ -45,7 +45,19 @@
             </tbody>
         </table>
 
-        <input class="btn btn-default" type="submit" formaction="{% url 'main:retrieveReport'%}" value="退回">
+        <br/>
+        <label>加分申请</label>
+        <textarea type="text" name="note1" rows="8" cols="80" readonly="readonly">{{note1}}</textarea>
+
+        <br/>
+        <label>科室批复</label>
+        <textarea type="text" name="note2" rows="8" cols="80" readonly="readonly">{{note2}}</textarea>
+
+        <br/>
+        <label>部门批复</label>
+        <textarea type="text" name="note" rows="8" cols="80" >{{reportForm.note.value}}</textarea>
+
+        <input class="btn btn-default" type="submit" formaction="{% url 'main:saveReport' 7 %}" value="退回">
         <input class="btn btn-default" type="submit" value="保存">
         <input class="btn btn-default" type="submit" formaction="{% url 'main:saveReport' 5 %}" value="归档">
     </fieldset>

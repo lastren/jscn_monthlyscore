@@ -8,14 +8,8 @@ class TaskForm(forms.ModelForm):
         model = models.Task
         fields=['desc','done']
         widgets={
-            'desc':forms.Textarea(attrs={
-                'rows':2,
-                'cols':40
-            }),
-            'done': forms.Textarea(attrs={
-                'rows': 2,
-                'cols': 40
-            }),
+            'desc':forms.Textarea,
+            'done': forms.Textarea,
         }
 
 class ReportForm(forms.Form):
@@ -34,6 +28,10 @@ class ReportForm(forms.Form):
     scoreR = forms.DecimalField(
         max_value=5,
         min_value=0,
+    )
+    note = forms.CharField(
+        max_length=2048,
+        widget= forms.Textarea,
     )
 
 
