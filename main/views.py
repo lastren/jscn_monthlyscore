@@ -100,7 +100,6 @@ def addReport(request):
         'reportForm': reportForm,
         'reportid':report.pk,
         'reportmonth':report.month,
-        'shownote':False
     })
 
 @login_required
