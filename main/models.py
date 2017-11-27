@@ -50,9 +50,9 @@ class Report(models.Model):
     scoreR2 = models.DecimalField(verbose_name=u'行为规范科评分', default=0,max_digits=3,decimal_places=1)
     scoreR3 = models.DecimalField(verbose_name=u'行为规范部评分', default=0,max_digits=3,decimal_places=1)
 
-    note1 = models.CharField(verbose_name=u'加分事由',max_length=2048,default=u'')
-    note2 = models.CharField(verbose_name=u'科室批复', max_length=2048, default=u'')
-    note3 = models.CharField(verbose_name=u'部门批复', max_length=2048, default=u'')
+    note1 = models.CharField(verbose_name=u'加分事由',max_length=2048,blank=True,null=True)
+    note2 = models.CharField(verbose_name=u'科室批复', max_length=2048,blank=True,null=True)
+    note3 = models.CharField(verbose_name=u'部门批复', max_length=2048,blank=True,null=True)
 
     # def getSum1(self):
     #     return self.scoreL1+self.scoreS1+self.scoreD1+self.scoreR1

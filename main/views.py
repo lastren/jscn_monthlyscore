@@ -380,7 +380,7 @@ def saveReport(request,type):
 
         report = get_object_or_404(Report, pk=int(reportid))
         imauthor, imleader, immanager = checkMyRole(request.user.profile, report.author)
-
+        print(form.errors)
         if form.is_valid():
             if imauthor:
                 if type in [Report.STATUS_INITIAL, Report.STATUS_SUBMITTOLEADER]:

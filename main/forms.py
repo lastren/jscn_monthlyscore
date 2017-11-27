@@ -32,6 +32,7 @@ class ReportForm(forms.Form):
     note = forms.CharField(
         max_length=2048,
         widget= forms.Textarea,
+        required=False,
     )
 
 
