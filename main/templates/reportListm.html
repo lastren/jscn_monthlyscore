@@ -10,10 +10,11 @@
     <table class="table table-bordered" style="{table-layout:fixed;}">
         <thead>
             <tr>
-                <th style="width:30%;text-align:center">姓名 月份</th>
-                <th style="width:20%;text-align:center">部门</th>
-                <th style="width:25%;text-align:center">科室评分</th>
-                <th style="width:25%;text-align:center">部门评分</th>
+                <th style="width:28%;text-align:center">姓名 月份</th>
+                <th style="width:18%;text-align:center">部门</th>
+                <th style="width:18%;text-align:center">科室评分</th>
+                <th style="width:18%;text-align:center">部门评分</th>
+                <th style="width:18%;text-align:center">总分</th>
             </tr>
         </thead>
         <tbody>
@@ -23,6 +24,7 @@
                 <td>{{report.author.get_department_display}}</td>
                 <td>{{report.getSum2}}</td>
                 <td>{{report.getSum3}}</td>
+                <td>{{report.getSumAll}}</td>
             </tr>
             {% endfor %}
         </tbody>
