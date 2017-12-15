@@ -24,23 +24,27 @@
             <tbody>
             <tr>
                 <td>长期项目研发</td>
-                <td>{{scorel2}}</td>
-                <td>{{reportForm.scoreL}}</td>
+                <td id="sl2">{{scorel2}}</td>
+                <td id="test">{{reportForm.scoreL}}</td>
             </tr>
             <tr>
                 <td>短期研发测试</td>
-                <td>{{scores2}}</td>
+                <td id="ss2">{{scores2}}</td>
                 <td>{{reportForm.scoreS}}</td>
             </tr>
             <tr>
                 <td>日常运维支撑</td>
-                <td>{{scored2}}</td>
+                <td id="sd2">{{scored2}}</td>
                 <td>{{reportForm.scoreD}}</td>
             </tr>
             <tr>
                 <td>日常行为规范</td>
-                <td>{{scorer2}}</td>
+                <td id="sr2">{{scorer2}}</td>
                 <td>{{reportForm.scoreR}}</td>
+            </tr>
+            <tr>
+                <td>总分</td>
+                <td colspan="2" id="totalscore"></td>
             </tr>
             </tbody>
         </table>
@@ -65,3 +69,33 @@
 
 {% endblock %}
 
+
+{%block bodyscriptadd %}
+
+function getSum(){
+        var l2 = parseFloat($('#sl2').text())
+        var s2 = parseFloat($('#ss2').text())
+        var d2 = parseFloat($('#sd2').text())
+        var r2 = parseFloat($('#sr2').text())
+        var sum2 = (l2+s2+d2+r2)*0.5
+
+        var l3 = parseFloat($('#id_scoreL').val())
+        var s3 = parseFloat($('#id_scoreS').val())
+        var d3 = parseFloat($('#id_scoreD').val())
+        var r3 = parseFloat($('#id_scoreR').val())
+        var sum3 = (l3+s3+d3+r3)*0.5
+
+        var sum = sum2+sum3
+        $('#totalscore').text(sum)
+}
+
+$(document).ready(function(){
+    getSum()
+    $('#id_scoreL').on('input propertychange', getSum);
+    $('#id_scoreS').on('input propertychange', getSum);
+    $('#id_scoreD').on('input propertychange', getSum);
+    $('#id_scoreR').on('input propertychange', getSum);
+
+});
+
+{% endblock %}
