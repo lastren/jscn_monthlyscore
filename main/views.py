@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django.shortcuts import render,redirect,reverse
 import forms
-from models import Report,Task
+from models import Report,Task,ExtraReport
 from django.http import HttpResponseRedirect
 import datetime
 from django.contrib.auth.models import User
@@ -340,7 +340,6 @@ def editReport(request,reportid):
 
         return render(request, 'editReporth.html', context)
 
-
     return redirect(reverse('main:home'))
 
 
@@ -387,8 +386,18 @@ def saveReport(request,type):
                         report.note1 = form.cleaned_data['note']
                         report.status = type
                         report.save()
+                        if type == Report.STATUS_SUBMITTOLEADER:
+                            if report.extraReports.count() > 0:
+                                report.extraReports.delete()
+                            for department in [u'1',u'2',u'3']:
+                                if request.user.profile.department == department:
+                                    pass
+                                else:
+                                    x = ExtraReport(leader=department)
+                                    x.report = report
+                                    x.save()
             elif imleader:
-                if type in [Report.STATUS_LEADERCHECK, Report.STATUS_SUBMITTOMANAGER,Report.STATUS_RETURNBYLEADER]:
+                if type in [Report.STATUS_LEADERCHECK,Report.STATUS_RETURNBYLEADER]:
                     if report.status in [Report.STATUS_LEADERCHECK, Report.STATUS_RETURNBYMANAGER]:
                         report.scoreL2 = form.cleaned_data['scoreL']
                         report.scoreS2 = form.cleaned_data['scoreS']
@@ -398,7 +407,14 @@ def saveReport(request,type):
                         report.note2 = form.cleaned_data['note']
                         report.status = type
                         report.save()
-
+                elif type == Report.STATUS_SUBMITTOMANAGER_WAIT:
+                    extraReports = report.extraReports
+                    n = 0
+                    for xr in extraReports:
+                        if xr.status == ExtraReport.STATUS_SUBMITTOMANAGER:
+                            n += 1
+                    if n==2:
+                        report.status = Report.STATUS_SUBMITTOMANAGER_DONE
             elif immanager:
                 if type in [Report.STATUS_MANAGERCHECK, Report.STATUS_ARCHIVED, Report.STATUS_RETURNBYMANAGER]:
                     if report.status in [Report.STATUS_MANAGERCHECK]:
@@ -425,13 +441,14 @@ def retrieveReport(request):
         status = report.status
         profile = request.user.profile
         author = report.author
+        extraReports = report.extraReports.all()
 
         if profile.pk == author.pk:
             if status == Report.STATUS_SUBMITTOLEADER:
                 report.status= Report.STATUS_INITIAL
                 report.save()
         elif profile.userRole==Profile.LEADER and profile.department==author.department:
-            if status == Report.STATUS_SUBMITTOMANAGER:
+            if status in [Report.STATUS_SUBMITTOMANAGER_DONE,Report.STATUS_SUBMITTOMANAGER_WAIT]:
                 report.status = Report.STATUS_LEADERCHECK
                 report.save()
             elif status == Report.STATUS_LEADERCHECK or status == Report.STATUS_RETURNBYMANAGER:
@@ -441,6 +458,8 @@ def retrieveReport(request):
                 report.scoreD2 = 0
                 report.scoreR2 = 0
                 report.save()
+                extraReports.delete()
+
         elif profile.userRole==Profile.MANAGER:
             if status == Report.STATUS_MANAGERCHECK:
                 report.status = Report.STATUS_RETURNBYMANAGER
@@ -449,6 +468,9 @@ def retrieveReport(request):
                 report.scoreD3 = 0
                 report.scoreR3 = 0
                 report.save()
+                for xr in extraReports:
+                    xr.status = ExtraReport.STATUS_RETURNBYMANAGER
+                    xr.save()
 
     return redirect(reverse('main:home'))
 
@@ -487,6 +509,7 @@ class ReportList(ListView):
                         return None
                 else:
                     return None
+
         else:
             dept = self.args[1]
             if profile.userRole == Profile.MANAGER:
@@ -499,7 +522,6 @@ class ReportList(ListView):
                     return None
             else:
                 return None
-
 
     def get_context_data(self, **kwargs):
         context = super(ReportList, self).get_context_data(**kwargs)
@@ -526,13 +548,83 @@ class ReportList(ListView):
 
         return context
 
+
+@login_required
+def getExtraReports(request,type,dept):
+    template_name = 'extraReportList.html'
+    context ={'title':ExtraReport.STATUS[int(type) -1][1]}
+    reports = []
+
+    rs = ExtraReport.objects.filter(report__author__department=dept
+                                         ).filter(status=type).filter(leader=request.user.profile.department)
+    print(rs.count())
+    for r in rs:
+        item = {
+            'id':r.pk,
+            'author':r.report.author,
+            'month':r.report.month,
+            'sum':r.getSum()
+        }
+        reports.append(item)
+
+    context['reports']=reports
+
+    return render(request,template_name,context)
+
+
+@login_required
+def editExtraReport(request,xid):
+    xReport = get_object_or_404(Report,pk=int(xid))
+    report = xReport.report
+
+    reportForm = None
+
+    tasksL = report.tasks.filter(type=u'1')
+    tasksS = report.tasks.filter(type=u'2')
+    tasksD = report.tasks.filter(type=u'3')
+
+    context={
+                'reportmonth': report.month,
+                'xid': xid,
+                'tasksL': tasksL,
+                'tasksS': tasksS,
+                'tasksD': tasksD
+            }
+
+    imauthor,imleader,immanager = checkMyRole(request.user.profile,report.author)
+
+    if imleader:
+        if report.status in [ExtraReport.STATUS_SUBMITTOLEADER, ExtraReport.STATUS_LEADERCHECK]:
+            xReport.status = Report.STATUS_LEADERCHECK
+            xReport.save()
+
+            reportForm = forms.ReportForm({
+                'scoreL': xReport.scoreL,
+                'scoreS': xReport.scoreS,
+                'scoreD': xReport.scoreD,
+                'scoreR': xReport.scoreR,
+            })
+            context['reportForm'] = reportForm
+            context['note1'] = report.note1
+            context['note2'] = report.note2
+            context['note3'] = report.note3
+
+            context['author'] = report.author
+            return render(request, 'editExtraReportle.html', context)
+
+    else:
+        whenErrorHappens(request, u'无操作权限')
+
+
+
+
+    return redirect(reverse('main:home'))
+
+
 @login_required
 def historyView(request):
     template_name = 'history.html'
     return render(request, template_name)
-
-
-
 
 
 def ajaxedittask(request):
@@ -597,6 +689,7 @@ def ajaxgetreports(request):
     date = datetime.date(dt.year,dt.month,1)
     reports = Report.objects.filter(status=Report.STATUS_ARCHIVED).filter(month=date)
     return render(request, template_name,{'report_list':reports})
+
 
 @login_required
 def toexcel(request):

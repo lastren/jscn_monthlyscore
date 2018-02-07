@@ -2,7 +2,8 @@
 
 <nav class="navbar">
     <span class="dropdown">
-    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" >
+    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="true">
     {{request.session.username}}
     <span class="caret"></span>
     </button>
@@ -19,13 +20,11 @@
 
         <li role="presentation"><a class="btn btn_default" href="{% url 'main:home' %}">Home</a></li>
 
-        {% if request.session.userrole != 'manager' %}
-
-        {% if request.session.userrole != 'leader' %}
-
+        {% if request.session.userrole == 'worker' %}
         <li role="presentation">
             <span class="dropdown">
-                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" >
+                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="true">
                 我的报告
                 <span class="caret"></span>
                 </button>
@@ -38,13 +37,16 @@
             </span>
         </li>
 
-        {% else %}
+        {% elif request.session.userrole == 'leader' %}
+        {% for key,value in request.session.depts.items %}
         <li role="presentation">
             <span class="dropdown">
-                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu3" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" >
-                科室报告
+                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu3" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="true">
+                {{value}}
                 <span class="caret"></span>
                 </button>
+                {% if request.session.userdept == value %}
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenu3">
                     <li><a href="{% url 'main:getTheirReports' 1 %}">已提交科室 {% report_num 'l1'%}</a></li>
                     <li><a href="{% url 'main:getTheirReports' 2 %}">科室审核中 {% report_num 'l2'%}</a></li>
@@ -53,16 +55,25 @@
                     <li><a href="{% url 'main:getTheirReports' 6 %}">退回员工 {% report_num 'l6'%}</a></li>
                     <li><a href="{% url 'main:getTheirReports' 7 %}">退回科室 {% report_num 'l7'%}</a></li>
                 </ul>
+                {% else %}
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenu3">
+                    <li><a href="{% url 'main:getExtraReports' 1 key %}">已提交科室 {% report_num 'l1'%}</a></li>
+                    <li><a href="{% url 'main:getExtraReports' 2 key %}">科室审核中 {% report_num 'l2'%}</a></li>
+                    <li><a href="{% url 'main:getExtraReports' 3 key %}">已提交部门 {% report_num 'l3'%}</a></li>
+                    <li><a href="{% url 'main:getExtraReports' 4 key %}">部门审核中 {% report_num 'l4'%}</a></li>
+                    <li><a href="{% url 'main:getExtraReports' 7 key %}">退回科室 {% report_num 'l6'%}</a></li>
+                </ul>
+                {% endif %}
             </span>
         </li>
-        {% endif %}
+        {% endfor %}
 
-        {% else %}
-
+        {% elif request.session.userrole == 'manager' %}
         {% for key,value in request.session.depts.items %}
         <li role="presentation">
             <span class="dropdown">
-                <button class="btn btn-default dropdown-toggle" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" >
+                <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="true">
                     {{value}}
                     <span class="caret"></span>
                 </button>

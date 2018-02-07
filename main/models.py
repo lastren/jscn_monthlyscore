@@ -10,21 +10,24 @@ class Report(models.Model):
     STATUS_INITIAL = u'0'
     STATUS_SUBMITTOLEADER = u'1'
     STATUS_LEADERCHECK = u'2'
-    STATUS_SUBMITTOMANAGER = u'3'
+    STATUS_SUBMITTOMANAGER_WAIT = u'3'
     STATUS_MANAGERCHECK = u'4'
     STATUS_ARCHIVED = u'5'
     STATUS_RETURNBYLEADER = u'6'
     STATUS_RETURNBYMANAGER = u'7'
+    #leader check unfinished:someone in the 3 not done yet
+    STATUS_SUBMITTOMANAGER_DONE = u'8'
 
     STATUS=(
         (STATUS_INITIAL, u'未提交'),
         (STATUS_SUBMITTOLEADER, u'已提交科室'),
         (STATUS_LEADERCHECK, u'科室审核中'),
-        (STATUS_SUBMITTOMANAGER, u'已提交部门'),
+        (STATUS_SUBMITTOMANAGER_DONE, u'已提交部门'),
         (STATUS_MANAGERCHECK, u'部门审核中'),
         (STATUS_ARCHIVED, u'已存档'),
         (STATUS_RETURNBYLEADER, u'退回员工'),
         (STATUS_RETURNBYMANAGER, u'退回科室'),
+        (STATUS_SUBMITTOMANAGER_WAIT, u'其它科室审核中'),
     )
     month=models.DateField(verbose_name=u'报告期号', db_index=True)
     status=models.CharField(
@@ -53,6 +56,23 @@ class Report(models.Model):
     note1 = models.CharField(verbose_name=u'加分事由',max_length=2048,blank=True,null=True)
     note2 = models.CharField(verbose_name=u'科室批复', max_length=2048,blank=True,null=True)
     note3 = models.CharField(verbose_name=u'部门批复', max_length=2048,blank=True,null=True)
+
+    # #3leader
+    # #from department1's leader
+    # scoreLd1 = models.DecimalField(verbose_name=u'长期项目科评分', default=0, max_digits=3, decimal_places=1)
+    # scoreSd1 = models.DecimalField(verbose_name=u'短期项目科评分', default=0, max_digits=3, decimal_places=1)
+    # scoreDd1 = models.DecimalField(verbose_name=u'日常项目科评分', default=0, max_digits=3, decimal_places=1)
+    # scoreRd1 = models.DecimalField(verbose_name=u'行为规范科评分', default=0, max_digits=3, decimal_places=1)
+    # # from department2's leader
+    # scoreLd2 = models.DecimalField(verbose_name=u'长期项目科评分', default=0, max_digits=3, decimal_places=1)
+    # scoreSd2 = models.DecimalField(verbose_name=u'短期项目科评分', default=0, max_digits=3, decimal_places=1)
+    # scoreDd2 = models.DecimalField(verbose_name=u'日常项目科评分', default=0, max_digits=3, decimal_places=1)
+    # scoreRd2 = models.DecimalField(verbose_name=u'行为规范科评分', default=0, max_digits=3, decimal_places=1)
+    # # from department3's leader
+    # scoreLd3 = models.DecimalField(verbose_name=u'长期项目科评分', default=0, max_digits=3, decimal_places=1)
+    # scoreSd3 = models.DecimalField(verbose_name=u'短期项目科评分', default=0, max_digits=3, decimal_places=1)
+    # scoreDd3 = models.DecimalField(verbose_name=u'日常项目科评分', default=0, max_digits=3, decimal_places=1)
+    # scoreRd3 = models.DecimalField(verbose_name=u'行为规范科评分', default=0, max_digits=3, decimal_places=1)
 
     # def getSum1(self):
     #     return self.scoreL1+self.scoreS1+self.scoreD1+self.scoreR1
@@ -98,5 +118,56 @@ class Task(models.Model):
         verbose_name = u'任务信息'
         ordering = ['id']
 
+#used for other leaders to score
+class ExtraReport(models.Model):
+    STATUS_SUBMITTOLEADER = u'1'
+    STATUS_LEADERCHECK = u'2'
+    STATUS_SUBMITTOMANAGER = u'3'
+    STATUS_MANAGERCHECK = u'4'
+    STATUS_RETURNBYMANAGER = u'7'
 
+    STATUS = (
+        (STATUS_SUBMITTOLEADER, u'已提交科室'),
+        (STATUS_LEADERCHECK, u'审核中'),
+        (STATUS_SUBMITTOMANAGER, u'已提交部门'),
+        (STATUS_MANAGERCHECK, u'部门审核中'),
+        (STATUS_RETURNBYMANAGER, u'退回科室'),
+    )
 
+    status = models.CharField(
+        choices=STATUS,
+        default=u'1',
+        max_length=10,
+    )
+
+    report = models.ForeignKey(Report,
+                               on_delete=models.CASCADE,
+                               related_name='extraReports', )
+
+    DP1 = u'1'
+    DP2 = u'2'
+    DP3 = u'3'
+    DP1NAME = u'技术开发科'
+    DP2NAME = u'IT支撑科'
+    DP3NAME = u'规划发展科'
+    DEPARTMENT = (
+        (DP1, DP1NAME),
+        (DP2, DP2NAME),
+        (DP3, DP3NAME),
+    )
+    leader = models.CharField(
+        max_length=20,
+        choices=DEPARTMENT,
+    )
+
+    scoreL = models.DecimalField(verbose_name=u'长期项目科评分', default=0, max_digits=3, decimal_places=1)
+    scoreS = models.DecimalField(verbose_name=u'短期项目科评分', default=0, max_digits=3, decimal_places=1)
+    scoreD = models.DecimalField(verbose_name=u'日常项目科评分', default=0, max_digits=3, decimal_places=1)
+    scoreR = models.DecimalField(verbose_name=u'行为规范科评分', default=0, max_digits=3, decimal_places=1)
+
+    def getSum(self):
+        return self.scoreL + self.scoreS + self.scoreD + self.scoreR
+
+    class Meta:
+        verbose_name = u'报告副表'
+        ordering = ['id']

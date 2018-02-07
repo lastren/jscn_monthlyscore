@@ -19,6 +19,9 @@ urlpatterns = [
     url(r'^getMyReports/([0-9]{1,2})/$', ReportList.as_view(),{'imauthor':u'1'},name='getMyReports'),
     url(r'^getTheirReports/([0-9]{1})/$', ReportList.as_view(),{'imauthor':u'0'},name='getTheirReports'),
     url(r'^getDeptReports/([0-9]{1})/([1-9]{1})/$', ReportList.as_view(),name='getDeptReports'),
+    #leader get other department's reports
+    url(r'^getExtraReports/([0-9]{1})/([1-9]{1})/$', views.getExtraReports,name='getExtraReports'),
+    url(r'^editExtraReport/([0-9]+)/$', views.editExtraReport, name='editExtraReport'),
 
     url(r'^ajaxedittask$', views.ajaxedittask, name='ajaxedittask'),
     url(r'^ajaxdeletetask$', views.ajaxdeletetask, name='ajaxdeletetask'),

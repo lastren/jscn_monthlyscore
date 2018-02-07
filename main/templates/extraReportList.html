@@ -1,0 +1,32 @@
+{% extends 'jumbotron_base.html' %}
+
+{% block title %}ReportList L{% endblock %}
+
+{%block maincontent %}
+
+{% block content %}
+    <h2>{{title}}</h2>
+
+    <table class="table table-bordered" style="{table-layout:fixed;}">
+        <thead>
+            <tr>
+                <th style="width:34%;text-align:center">姓名 </th>
+                <th style="width:33%;text-align:center">月份</th>
+                <th style="width:33%;text-align:center">科室评分</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for report in reports %}
+            <tr>
+                <td><a href="{% url 'main:editReport' report.id %}">{{report.author}} </a></td>
+                <td>{{report.month|date:'Y-m' }}</td>
+                <td>{{report.sum}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}
+
+{% endblock %}
+

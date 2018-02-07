@@ -1,0 +1,66 @@
+{% extends 'jumbotron_base.html' %}
+
+{% block title %}Edit ExtraReport {% endblock %}
+
+{%block maincontent %}
+
+{% include 'reportTitlel.html' %}
+
+{% include 'taskArea.html' %}
+
+<form action="{% url 'main:saveReport' 2 %}" role="form"  method="POST">
+    <fieldset>
+        {% csrf_token %}
+        <input type="hidden" id="reportid" name="reportid" value={{reportid}}>
+
+        <table class="table table-bordered" style="{table-layout:fixed;}">
+            <thead>
+            <tr>
+                <th style="width:50%">指标名称</th>
+                <th style="width:50%">科室评分</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>长期项目研发</td>
+                <td>{{reportForm.scoreL}}</td>
+            </tr>
+            <tr>
+                <td>短期研发测试</td>
+                <td>{{reportForm.scoreS}}</td>
+            </tr>
+            <tr>
+                <td>日常运维支撑</td>
+                <td>{{reportForm.scoreD}}</td>
+            </tr>
+            <tr>
+                <td>日常行为规范</td>
+                <td>{{reportForm.scoreR}}</td>
+            </tr>
+            </tbody>
+        </table>
+
+
+        <br/>
+        <label>加分申请</label>
+        <textarea type="text" name="note1" rows="8" cols="80" readonly="readonly">{{note1}}</textarea>
+
+        <br/>
+        <label>科室批复</label>
+        <textarea type="text" name="note3" rows="8" cols="80" readonly="readonly">{{note2}}</textarea>
+
+        <br/>
+        <label>部门批复</label>
+        <textarea type="text" name="note3" rows="8" cols="80" readonly="readonly">{{note3}}</textarea>
+
+
+
+        <input type="submit" class="btn btn-default" formaction="{% url 'main:saveReport' 6 %}" value="退回">
+        <input type="submit" class="btn btn-default" value="保存">
+        <input type="submit" class="btn btn-default" formaction="{% url 'main:saveReport' 3 %}" value="提交">
+
+    </fieldset>
+</form>
+
+{% endblock %}
+
