@@ -14,7 +14,7 @@
   </ul>
 </span>
 
-    {{request.session.userdept}}
+    {{request.session.userdept.value}}
 
     <ul class="nav nav-pills pull-right">
 
@@ -46,7 +46,7 @@
                 {{value}}
                 <span class="caret"></span>
                 </button>
-                {% if request.session.userdept == value %}
+                {% if request.session.userdept.key == key %}
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenu3">
                     <li><a href="{% url 'main:getTheirReports' 1 %}">已提交科室 {% report_num 'l1'%}</a></li>
                     <li><a href="{% url 'main:getTheirReports' 2 %}">科室审核中 {% report_num 'l2'%}</a></li>
@@ -57,11 +57,11 @@
                 </ul>
                 {% else %}
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenu3">
-                    <li><a href="{% url 'main:getExtraReports' 1 key %}">已提交科室 {% report_num 'l1'%}</a></li>
-                    <li><a href="{% url 'main:getExtraReports' 2 key %}">科室审核中 {% report_num 'l2'%}</a></li>
-                    <li><a href="{% url 'main:getExtraReports' 3 key %}">已提交部门 {% report_num 'l3'%}</a></li>
-                    <li><a href="{% url 'main:getExtraReports' 4 key %}">部门审核中 {% report_num 'l4'%}</a></li>
-                    <li><a href="{% url 'main:getExtraReports' 7 key %}">退回科室 {% report_num 'l6'%}</a></li>
+                    <li><a href="{% url 'main:getExtraReports' 1 key %}">已提交科室 {% report_num 'l'|addstr:key|addstr:request.session.userdept.key|addstr:'1'%}</a></li>
+                    <li><a href="{% url 'main:getExtraReports' 2 key %}">科室审核中 {% report_num 'l'|addstr:key|addstr:request.session.userdept.key|addstr:'2'%}</a></li>
+                    <li><a href="{% url 'main:getExtraReports' 3 key %}">已提交部门 {% report_num 'l'|addstr:key|addstr:request.session.userdept.key|addstr:'3'%}</a></li>
+                    <li><a href="{% url 'main:getExtraReports' 4 key %}">部门审核中 {% report_num 'l'|addstr:key|addstr:request.session.userdept.key|addstr:'4'%}</a></li>
+                    <li><a href="{% url 'main:getExtraReports' 7 key %}">退回科室 {% report_num 'l'|addstr:key|addstr:request.session.userdept.key|addstr:'7'%}</a></li>
                 </ul>
                 {% endif %}
             </span>

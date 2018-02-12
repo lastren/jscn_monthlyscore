@@ -22,6 +22,7 @@ urlpatterns = [
     #leader get other department's reports
     url(r'^getExtraReports/([0-9]{1})/([1-9]{1})/$', views.getExtraReports,name='getExtraReports'),
     url(r'^editExtraReport/([0-9]+)/$', views.editExtraReport, name='editExtraReport'),
+    url(r'^saveExtraReport/([0-9]{1})/$', views.saveExtraReport, name='saveExtraReport'),
 
     url(r'^ajaxedittask$', views.ajaxedittask, name='ajaxedittask'),
     url(r'^ajaxdeletetask$', views.ajaxdeletetask, name='ajaxdeletetask'),

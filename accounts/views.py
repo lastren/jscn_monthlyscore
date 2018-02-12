@@ -32,10 +32,10 @@ def loginView(request):
                     profile = models.Profile.objects.get(user=user)
 
                     request.session['userrole'] = profile.userRole
-                    request.session['userdept'] = profile.get_department_display()
+                    request.session['userdept'] = {'key':profile.department,'value':profile.get_department_display()}
                     request.session['username'] = profile.displayName
                     request.session['account'] = username
-                    request.session['depts'] = {Profile.DP1:Profile.DP1NAME,
+                    request.session['depts'] = {Profile.DP1: Profile.DP1NAME,
                                                 Profile.DP2: Profile.DP2NAME,
                                                 Profile.DP3: Profile.DP3NAME
                                                 }

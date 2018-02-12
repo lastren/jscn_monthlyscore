@@ -18,7 +18,7 @@
         <tbody>
             {% for report in reports %}
             <tr>
-                <td><a href="{% url 'main:editReport' report.id %}">{{report.author}} </a></td>
+                <td><a href="{% url 'main:editExtraReport' report.id %}">{{report.author}} </a></td>
                 <td>{{report.month|date:'Y-m' }}</td>
                 <td>{{report.sum}}</td>
             </tr>

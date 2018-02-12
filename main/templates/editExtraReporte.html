@@ -8,7 +8,7 @@
 
 {% include 'taskArea.html' %}
 
-<form action="{% url 'main:saveReport' 2 %}" role="form"  method="POST">
+<form action="{% url 'main:saveExtraReport' 2 %}" role="form"  method="POST">
     <fieldset>
         {% csrf_token %}
         <input type="hidden" id="reportid" name="reportid" value={{reportid}}>
@@ -46,18 +46,12 @@
         <textarea type="text" name="note1" rows="8" cols="80" readonly="readonly">{{note1}}</textarea>
 
         <br/>
-        <label>科室批复</label>
-        <textarea type="text" name="note3" rows="8" cols="80" readonly="readonly">{{note2}}</textarea>
-
-        <br/>
         <label>部门批复</label>
         <textarea type="text" name="note3" rows="8" cols="80" readonly="readonly">{{note3}}</textarea>
 
 
-
-        <input type="submit" class="btn btn-default" formaction="{% url 'main:saveReport' 6 %}" value="退回">
         <input type="submit" class="btn btn-default" value="保存">
-        <input type="submit" class="btn btn-default" formaction="{% url 'main:saveReport' 3 %}" value="提交">
+        <input type="submit" class="btn btn-default" formaction="{% url 'main:saveExtraReport' 3 %}" value="提交">
 
     </fieldset>
 </form>
