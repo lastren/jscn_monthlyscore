@@ -29,7 +29,7 @@ def getReportNum(account):
         reports = Report.objects.filter(author__department=profile.department)
         result['l1'] = reports.filter(status=Report.STATUS_SUBMITTOLEADER).count()
         result['l2'] = reports.filter(status=Report.STATUS_LEADERCHECK).count()
-        result['l3'] = reports.filter(status=Report.STATUS_SUBMITTOMANAGER_WAIT).count()
+        result['l3'] = reports.filter(status__in=[Report.STATUS_SUBMITTOMANAGER_WAIT, Report.STATUS_SUBMITTOMANAGER_DONE]).count()
         result['l4'] = reports.filter(status=Report.STATUS_MANAGERCHECK).count()
         result['l6'] = reports.filter(status=Report.STATUS_RETURNBYLEADER).count()
         result['l7'] = reports.filter(status=Report.STATUS_RETURNBYMANAGER).count()

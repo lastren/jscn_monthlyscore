@@ -22,12 +22,12 @@ class Report(models.Model):
         (STATUS_INITIAL, u'未提交'),
         (STATUS_SUBMITTOLEADER, u'已提交科室'),
         (STATUS_LEADERCHECK, u'科室审核中'),
-        (STATUS_SUBMITTOMANAGER_DONE, u'已提交部门'),
+        (STATUS_SUBMITTOMANAGER_WAIT, u'已提交部门.'),
         (STATUS_MANAGERCHECK, u'部门审核中'),
         (STATUS_ARCHIVED, u'已存档'),
         (STATUS_RETURNBYLEADER, u'退回员工'),
         (STATUS_RETURNBYMANAGER, u'退回科室'),
-        (STATUS_SUBMITTOMANAGER_WAIT, u'其它科室审核中'),
+        (STATUS_SUBMITTOMANAGER_DONE, u'已提交部门'),
     )
     month=models.DateField(verbose_name=u'报告期号', db_index=True)
     status=models.CharField(
@@ -120,23 +120,29 @@ class Task(models.Model):
 
 #used for other leaders to score
 class ExtraReport(models.Model):
+    STATUS_INITIAL = u'0'
     STATUS_SUBMITTOLEADER = u'1'
     STATUS_LEADERCHECK = u'2'
     STATUS_SUBMITTOMANAGER = u'3'
     STATUS_MANAGERCHECK = u'4'
+    STATUS_ARCHIVED = u'5'
+    STATUS_RETURNBYLEADER = u'6'
     STATUS_RETURNBYMANAGER = u'7'
 
     STATUS = (
+        (STATUS_INITIAL, u'未提交'),
         (STATUS_SUBMITTOLEADER, u'已提交科室'),
         (STATUS_LEADERCHECK, u'审核中'),
         (STATUS_SUBMITTOMANAGER, u'已提交部门'),
         (STATUS_MANAGERCHECK, u'部门审核中'),
+        (STATUS_ARCHIVED, u'已存档'),
+        (STATUS_RETURNBYLEADER, u'退回员工'),
         (STATUS_RETURNBYMANAGER, u'退回科室'),
     )
 
     status = models.CharField(
         choices=STATUS,
-        default=u'1',
+        default=u'0',
         max_length=10,
     )
 

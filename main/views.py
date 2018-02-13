@@ -90,7 +90,15 @@ def addReport(request):
     report.author=profile
     report.save()
 
-    reportForm = forms.ReportForm()
+    for department in [u'1', u'2', u'3']:
+        if request.user.profile.department == department:
+            pass
+        else:
+            x = ExtraReport(leader=department)
+            x.report = report
+            x.save()
+
+    #reportForm = forms.ReportForm()
 
     reportForm = {
         'note': report.note1,
@@ -211,7 +219,7 @@ def editReport(request,reportid):
             return render(request, 'editReportlr.html', context)
         else:
             whenErrorHappens(request, u'无操作权限')
-    elif report.status in [Report.STATUS_SUBMITTOMANAGER, Report.STATUS_MANAGERCHECK]:
+    elif report.status in [Report.STATUS_SUBMITTOMANAGER_DONE, Report.STATUS_SUBMITTOMANAGER_WAIT, Report.STATUS_MANAGERCHECK]:
         if imauthor:
             # reportForm = {
             #     'scoreL': report.scoreL1,
@@ -232,7 +240,7 @@ def editReport(request,reportid):
             context['scores2'] = report.scoreS2
             context['scored2'] = report.scoreD2
             context['scorer2'] = report.scoreR2
-            context['hasbtn'] = report.status==Report.STATUS_SUBMITTOMANAGER
+            context['hasbtn'] = report.status in [Report.STATUS_SUBMITTOMANAGER_WAIT, Report.STATUS_SUBMITTOMANAGER_DONE]
             context['author'] = report.author
 
             context['note1'] = report.note1
@@ -243,6 +251,11 @@ def editReport(request,reportid):
         elif immanager:
             report.status = Report.STATUS_MANAGERCHECK
             report.save()
+            extraReports = report.extraReports.all()
+            for xr in extraReports:
+                if xr.status == ExtraReport.STATUS_SUBMITTOMANAGER:
+                    xr.status = ExtraReport.STATUS_MANAGERCHECK
+                    xr.save()
 
             reportForm = forms.ReportForm({
                 'scoreL': report.scoreL3,
@@ -388,16 +401,20 @@ def saveReport(request,type):
                         report.save()
                         if type == Report.STATUS_SUBMITTOLEADER:
                             if report.extraReports.count() > 0:
-                                report.extraReports.delete()
-                            for department in [u'1',u'2',u'3']:
-                                if request.user.profile.department == department:
-                                    pass
-                                else:
-                                    x = ExtraReport(leader=department)
-                                    x.report = report
-                                    x.save()
+                                extraReports = report.extraReports.all()
+                                for xr in extraReports:
+                                    xr.status = ExtraReport.STATUS_SUBMITTOLEADER()
+                                    xr.save()
+                            else:
+                                for department in [u'1',u'2',u'3']:
+                                    if request.user.profile.department == department:
+                                        pass
+                                    else:
+                                        x = ExtraReport(leader=department,status=ExtraReport.STATUS_SUBMITTOLEADER)
+                                        x.report = report
+                                        x.save()
             elif imleader:
-                if type in [Report.STATUS_LEADERCHECK,Report.STATUS_RETURNBYLEADER]:
+                if type in [Report.STATUS_LEADERCHECK,Report.STATUS_RETURNBYLEADER,Report.STATUS_SUBMITTOMANAGER_WAIT]:
                     if report.status in [Report.STATUS_LEADERCHECK, Report.STATUS_RETURNBYMANAGER]:
                         report.scoreL2 = form.cleaned_data['scoreL']
                         report.scoreS2 = form.cleaned_data['scoreS']
@@ -407,14 +424,20 @@ def saveReport(request,type):
                         report.note2 = form.cleaned_data['note']
                         report.status = type
                         report.save()
-                elif type == Report.STATUS_SUBMITTOMANAGER_WAIT:
-                    extraReports = report.extraReports
-                    n = 0
-                    for xr in extraReports:
-                        if xr.status == ExtraReport.STATUS_SUBMITTOMANAGER:
-                            n += 1
-                    if n==2:
-                        report.status = Report.STATUS_SUBMITTOMANAGER_DONE
+
+                        extraReports = report.extraReports.all()
+                        if type == Report.STATUS_SUBMITTOMANAGER_WAIT:
+                            n = 0
+                            for xr in extraReports:
+                                if xr.status == ExtraReport.STATUS_SUBMITTOMANAGER:
+                                    n += 1
+                            if n==2:
+                                report.status = Report.STATUS_SUBMITTOMANAGER_DONE
+                                report.save()
+                        elif type == Report.STATUS_RETURNBYLEADER:
+                            for xr in extraReports:
+                                xr.status = ExtraReport.STATUS_RETURNBYLEADER
+                                xr.save()
             elif immanager:
                 if type in [Report.STATUS_MANAGERCHECK, Report.STATUS_ARCHIVED, Report.STATUS_RETURNBYMANAGER]:
                     if report.status in [Report.STATUS_MANAGERCHECK]:
@@ -428,10 +451,27 @@ def saveReport(request,type):
                         report.status = type
                         report.save()
 
+                        extraReports = report.extraReports.all()
+                        if type == Report.STATUS_RETURNBYMANAGER:
+                            for xr in extraReports:
+                                xr.status = ExtraReport.STATUS_RETURNBYMANAGER
+                                xr.save()
+                        elif type == Report.STATUS_ARCHIVED:
+                            for xr in extraReports:
+                                xr.status = ExtraReport.STATUS_ARCHIVED
+                                xr.save()
+                        else:
+                            for xr in extraReports:
+                                if xr.status == ExtraReport.STATUS_SUBMITTOMANAGER:
+                                    xr.status = ExtraReport.STATUS_MANAGERCHECK
+                                    xr.save()
+
+
+
 
     return redirect(reverse('main:home'))
 
-#only change status, not the content,used for 1-0,3-2,7-6
+#only change status, not the content,used for 1-0,3-2
 @login_required
 def retrieveReport(request):
     if request.method == 'POST':
@@ -458,7 +498,9 @@ def retrieveReport(request):
                 report.scoreD2 = 0
                 report.scoreR2 = 0
                 report.save()
-                extraReports.delete()
+                for xr in extraReports:
+                    xr.status = ExtraReport.STATUS_RETURNBYLEADER
+                    xr.save()
 
         elif profile.userRole==Profile.MANAGER:
             if status == Report.STATUS_MANAGERCHECK:
@@ -500,7 +542,12 @@ class ReportList(ListView):
                 return reports
             else:
                 if profile.userRole==Profile.LEADER:
-                    if type != Report.STATUS_INITIAL and type != Report.STATUS_ARCHIVED:
+                    if type == u'3':
+                        reports = Report.objects.filter(author__department=profile.department
+                                                        ).filter(status__in=[Report.STATUS_SUBMITTOMANAGER_WAIT,Report.STATUS_SUBMITTOMANAGER_DONE])
+                        self.template_name = 'reportListl.html'
+                        return reports
+                    elif type != Report.STATUS_INITIAL and type != Report.STATUS_ARCHIVED:
                         reports = Report.objects.filter(author__department=profile.department
                                                      ).filter(status=type)
                         self.template_name = 'reportListl.html'
@@ -513,7 +560,7 @@ class ReportList(ListView):
         else:
             dept = self.args[1]
             if profile.userRole == Profile.MANAGER:
-                if type in [Report.STATUS_SUBMITTOMANAGER,Report.STATUS_MANAGERCHECK,Report.STATUS_RETURNBYMANAGER]:
+                if type in [Report.STATUS_SUBMITTOMANAGER_DONE,Report.STATUS_MANAGERCHECK,Report.STATUS_RETURNBYMANAGER]:
                     reports = Report.objects.filter(author__department=dept
                                                     ).filter(status=type)
                     self.template_name = 'reportListm.html'
@@ -552,7 +599,18 @@ class ReportList(ListView):
 @login_required
 def getExtraReports(request,type,dept):
     template_name = 'extraReportList.html'
-    context ={'title':ExtraReport.STATUS[int(type) -1][1]}
+    context ={}
+    if type == '1':
+        context['title'] = u'已提交科室'
+    elif type == '2':
+        context['title'] = u'审核中'
+    elif type == '3':
+        context['title'] = u'已提交部门'
+    elif type == '4':
+        context['title'] = u'部门审核中'
+    elif type == '7':
+        context['title'] = u'退回科室'
+
     reports = []
 
     rs = ExtraReport.objects.filter(report__author__department=dept
@@ -577,8 +635,6 @@ def editExtraReport(request,xid):
     xReport = get_object_or_404(ExtraReport,pk=int(xid))
     report = xReport.report
 
-    reportForm = None
-
     tasksL = report.tasks.filter(type=u'1')
     tasksS = report.tasks.filter(type=u'2')
     tasksD = report.tasks.filter(type=u'3')
@@ -591,12 +647,11 @@ def editExtraReport(request,xid):
                 'tasksD': tasksD
             }
 
-    imauthor,imleader,immanager = checkMyRole(request.user.profile,report.author)
-
-    if imleader:
-        if report.status in [ExtraReport.STATUS_SUBMITTOLEADER, ExtraReport.STATUS_LEADERCHECK]:
-            xReport.status = Report.STATUS_LEADERCHECK
-            xReport.save()
+    if request.user.profile.userRole == Profile.LEADER:
+        if xReport.status in [ExtraReport.STATUS_SUBMITTOLEADER, ExtraReport.STATUS_LEADERCHECK,ExtraReport.STATUS_RETURNBYMANAGER]:
+            if xReport.status != ExtraReport.STATUS_RETURNBYMANAGER:
+                xReport.status = Report.STATUS_LEADERCHECK
+                xReport.save()
 
             reportForm = forms.ReportForm({
                 'scoreL': xReport.scoreL,
@@ -606,11 +661,21 @@ def editExtraReport(request,xid):
             })
             context['reportForm'] = reportForm
             context['note1'] = report.note1
-            context['note2'] = report.note2
             context['note3'] = report.note3
-
+            context['department'] = report.author.get_department_display()
             context['author'] = report.author
             return render(request, 'editExtraReporte.html', context)
+        elif xReport.status in[ExtraReport.STATUS_SUBMITTOMANAGER,ExtraReport.STATUS_MANAGERCHECK]:
+            context['scoreL'] = xReport.scoreL
+            context['scoreS'] = xReport.scoreS
+            context['scoreD'] = xReport.scoreD
+            context['scoreR'] = xReport.scoreR
+            context['note1'] = report.note1
+            context['note3'] = report.note3
+            context['author'] = report.author
+            context['hasbtn'] = (xReport.status == ExtraReport.STATUS_SUBMITTOMANAGER) and (report.status in [Report.STATUS_SUBMITTOLEADER,Report.STATUS_LEADERCHECK,Report.STATUS_SUBMITTOMANAGER_WAIT,Report.STATUS_SUBMITTOMANAGER_DONE])
+            context['department'] = report.author.get_department_display()
+            return render(request, 'editExtraReportr.html', context)
 
     else:
         whenErrorHappens(request, u'无操作权限')
@@ -626,38 +691,55 @@ def saveExtraReport(request,type):
 
         extraReport = get_object_or_404(ExtraReport, pk=int(xid))
         report = extraReport.report
-        imauthor, imleader, immanager = checkMyRole(request.user.profile, report.author)
         if form.is_valid():
-            if imleader:
-                if extraReport.status in [ExtraReport.STATUS_SUBMITTOLEADER,ExtraReport.STATUS_LEADERCHECK]:
-                    if type in [ExtraReport.STATUS_LEADERCHECK,ExtraReport.STATUS_SUBMITTOLEADER]
+            if request.user.profile.userRole == Profile.LEADER:
+                if extraReport.status in [ExtraReport.STATUS_SUBMITTOLEADER,ExtraReport.STATUS_LEADERCHECK,ExtraReport.STATUS_RETURNBYMANAGER]:
+                    if type in [ExtraReport.STATUS_LEADERCHECK,ExtraReport.STATUS_SUBMITTOMANAGER]:
+                        extraReport.scoreL = form.cleaned_data['scoreL']
+                        extraReport.scoreS = form.cleaned_data['scoreS']
+                        extraReport.scoreD = form.cleaned_data['scoreD']
+                        extraReport.scoreR = form.cleaned_data['scoreR']
+                        extraReport.status = type
+                        extraReport.save()
 
+                        if type == ExtraReport.STATUS_SUBMITTOMANAGER:
+                            extraReports = report.extraReports.all()
+                            n = 0
+                            for xr in extraReports:
+                                if xr.status == ExtraReport.STATUS_SUBMITTOMANAGER:
+                                    n += 1
+                            if n == 2:
+                                if report.status == Report.STATUS_SUBMITTOMANAGER_WAIT:
+                                    report.status = Report.STATUS_SUBMITTOMANAGER_DONE
+                                    report.save()
 
-
-
-                if type in [ExtraReport.STATUS_LEADERCHECK,ExtraReport.STATUS_RETURNBYLEADER]:
-                    if report.status in [Report.STATUS_LEADERCHECK, Report.STATUS_RETURNBYMANAGER]:
-                        report.scoreL2 = form.cleaned_data['scoreL']
-                        report.scoreS2 = form.cleaned_data['scoreS']
-                        report.scoreD2 = form.cleaned_data['scoreD']
-                        report.scoreR2 = form.cleaned_data['scoreR']
-
-                        report.note2 = form.cleaned_data['note']
-                        report.status = type
-                        report.save()
-                elif type == Report.STATUS_SUBMITTOMANAGER_WAIT:
-                    extraReports = report.extraReports
-                    n = 0
-                    for xr in extraReports:
-                        if xr.status == ExtraReport.STATUS_SUBMITTOMANAGER:
-                            n += 1
-                    if n==2:
-                        report.status = Report.STATUS_SUBMITTOMANAGER_DONE
             else:
                 whenErrorHappens(request, u'无操作权限')
 
     return redirect(reverse('main:home'))
 
+
+#only change status, not the content,used for 3-2
+@login_required
+def retrieveExtraReport(request):
+    if request.method == 'POST':
+        reportid = request.POST.get('reportid')
+
+        xReport = get_object_or_404(ExtraReport,pk=int(reportid))
+        report = xReport.report
+
+        if request.user.profile.userRole == Profile.LEADER:
+            if xReport.status == ExtraReport.STATUS_SUBMITTOMANAGER:
+                if report.status in [Report.STATUS_SUBMITTOLEADER,Report.STATUS_LEADERCHECK,
+                                     Report.STATUS_SUBMITTOMANAGER_WAIT,Report.STATUS_SUBMITTOMANAGER_DONE]:
+                    xReport.status = ExtraReport.STATUS_LEADERCHECK
+                    xReport.save()
+
+                    if report.status == Report.STATUS_SUBMITTOMANAGER_DONE:
+                        report.status = Report.STATUS_SUBMITTOMANAGER_WAIT
+                        report.save()
+
+    return redirect(reverse('main:home'))
 
 
 @login_required

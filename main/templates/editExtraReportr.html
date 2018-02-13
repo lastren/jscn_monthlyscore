@@ -1,6 +1,6 @@
 {% extends 'jumbotron_base.html' %}
 
-{% block title %}Edit ExtraReport E {% endblock %}
+{% block title %}Edit ExtraReport R{% endblock %}
 
 {%block maincontent %}
 
@@ -8,7 +8,7 @@
 
 {% include 'taskArea.html' %}
 
-<form action="{% url 'main:saveExtraReport' 2 %}" role="form"  method="POST">
+<form action="{% url 'main:retrieveExtraReport' %}" role="form"  method="POST">
     <fieldset>
         {% csrf_token %}
         <input type="hidden" id="reportid" name="reportid" value={{reportid}}>
@@ -23,19 +23,19 @@
             <tbody>
             <tr>
                 <td>长期项目研发</td>
-                <td>{{reportForm.scoreL}}</td>
+                <td>{{scoreL}}</td>
             </tr>
             <tr>
                 <td>短期研发测试</td>
-                <td>{{reportForm.scoreS}}</td>
+                <td>{{scoreS}}</td>
             </tr>
             <tr>
                 <td>日常运维支撑</td>
-                <td>{{reportForm.scoreD}}</td>
+                <td>{{scoreD}}</td>
             </tr>
             <tr>
                 <td>日常行为规范</td>
-                <td>{{reportForm.scoreR}}</td>
+                <td>{{scoreR}}</td>
             </tr>
             </tbody>
         </table>
@@ -45,14 +45,15 @@
         <label>加分申请</label>
         <textarea type="text" name="note1" rows="8" cols="80" readonly="readonly">{{note1}}</textarea>
 
+        {% if shownote %}
         <br/>
         <label>部门批复</label>
         <textarea type="text" name="note3" rows="8" cols="80" readonly="readonly">{{note3}}</textarea>
+        {% endif %}
 
-
-        <input type="submit" class="btn btn-default" value="保存">
-        <input type="submit" class="btn btn-default" formaction="{% url 'main:saveExtraReport' 3 %}" value="提交">
-
+        {% if hasbtn %}
+        <input class="btn btn-default" type="submit" value="撤回">
+        {% endif %}
     </fieldset>
 </form>
 
