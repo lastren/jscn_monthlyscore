@@ -403,7 +403,7 @@ def saveReport(request,type):
                             if report.extraReports.count() > 0:
                                 extraReports = report.extraReports.all()
                                 for xr in extraReports:
-                                    xr.status = ExtraReport.STATUS_SUBMITTOLEADER()
+                                    xr.status = ExtraReport.STATUS_SUBMITTOLEADER
                                     xr.save()
                             else:
                                 for department in [u'1',u'2',u'3']:
@@ -465,9 +465,6 @@ def saveReport(request,type):
                                 if xr.status == ExtraReport.STATUS_SUBMITTOMANAGER:
                                     xr.status = ExtraReport.STATUS_MANAGERCHECK
                                     xr.save()
-
-
-
 
     return redirect(reverse('main:home'))
 
