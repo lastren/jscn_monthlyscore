@@ -17,32 +17,42 @@
         <table class="table table-bordered" style="{table-layout:fixed;}">
             <thead>
             <tr>
-                <th style="width:40%">指标名称</th>
-                <th style="width:20%">科室评分</th>
-                <th style="width:20%">部门评分</th>
-                <th style="width:20%">总评分</th>
+                <th style="width:25%;text-align:center">指标名称</th>
+                <th style="width:15%;text-align:center">技术开发科评分</th>
+                <th style="width:15%;text-align:center">IT支撑科评分</th>
+                <th style="width:15%;text-align:center">规划发展科评分</th>
+                <th style="width:15%;text-align:center">部门评分</th>
+                <th style="width:15%;text-align:center">总评分</th>
             </tr>
             </thead>
             <tbody>
             <tr>
                 <td>长期项目研发</td>
-                <td>{{scorel2}}</td>
+                <td>{{dept1Score.0}}</td>
+                <td>{{dept2Score.0}}</td>
+                <td>{{dept3Score.0}}</td>
                 <td>{{scorel3}}</td>
                 <td rowspan="4" style="vertical-align:middle;">{{sum}}</td>
             </tr>
             <tr>
                 <td>短期研发测试</td>
-                <td>{{scores2}}</td>
+                <td>{{dept1Score.1}}</td>
+                <td>{{dept2Score.1}}</td>
+                <td>{{dept3Score.1}}</td>
                 <td>{{scores3}}</td>
             </tr>
             <tr>
                 <td>日常运维支撑</td>
-                <td>{{scored2}}</td>
+                <td>{{dept1Score.2}}</td>
+                <td>{{dept2Score.2}}</td>
+                <td>{{dept3Score.2}}</td>
                 <td>{{scored3}}</td>
             </tr>
             <tr>
                 <td>日常行为规范</td>
-                <td>{{scorer2}}</td>
+                <td>{{dept1Score.3}}</td>
+                <td>{{dept2Score.3}}</td>
+                <td>{{dept3Score.3}}</td>
                 <td>{{scorer3}}</td>
             </tr>
             </tbody>

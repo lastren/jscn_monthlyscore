@@ -1,12 +1,14 @@
 <table class="table table-bordered" style="{table-layout:fixed;}">
     <thead>
     <tr>
-        <th style="width:21%;text-align:center">姓名</th>
-        <th style="width:20%;text-align:center">月份</th>
-        <th style="width:20%;text-align:center">部门</th>
-        <th style="width:13%;text-align:center">科室评分</th>
-        <th style="width:13%;text-align:center">部门评分</th>
-        <th style="width:13%;text-align:center">总分</th>
+        <th style="width:12%;text-align:center">姓名</th>
+        <th style="width:12%;text-align:center">月份</th>
+        <th style="width:15%;text-align:center">部门</th>
+        <th style="width:13%;text-align:center">技术开发科评分</th>
+        <th style="width:13%;text-align:center">IT支撑科评分</th>
+        <th style="width:13%;text-align:center">规划发展科评分</th>
+        <th style="width:12%;text-align:center">部门评分</th>
+        <th style="width:10%;text-align:center">总分</th>
     </tr>
     </thead>
     <tbody>
@@ -15,9 +17,11 @@
         <td><a href="{% url 'main:editReport' report.pk %}">{{report.author}}</a></td>
         <td>{{report.month|date:'Y-m' }}</td>
         <td>{{report.author.get_department_display}}</td>
-        <td>{{report.getSum2}}</td>
+        <td>{{report.dept1Sum}}</td>
+        <td>{{report.dept2Sum}}</td>
+        <td>{{report.dept3Sum}}</td>
         <td>{{report.getSum3}}</td>
-        <td>{{report.getSumAll}}</td>
+        <td>{{report.sum}}</td>
     </tr>
     {% endfor %}
     </tbody>

@@ -12,39 +12,50 @@
     <fieldset>
         {% csrf_token %}
         <input type="hidden" id="reportid" name="reportid" value={{reportid}}>
+        <input type="hidden" id="deptsum" name="deptsum" value={{deptsum}}>
 
         <table class="table table-bordered" style="{table-layout:fixed;}">
             <thead>
             <tr>
-                <th style="width:34%">指标名称</th>
-                <th style="width:33%">科室评分</th>
-                <th style="width:33%">部门评分</th>
+                <th style="width:20%;text-align:center">指标名称</th>
+                <th style="width:20%;text-align:center">技术开发科评分</th>
+                <th style="width:20%;text-align:center">IT支撑科评分</th>
+                <th style="width:20%;text-align:center">规划发展科评分</th>
+                <th style="width:20%;text-align:center">部门评分</th>
             </tr>
             </thead>
             <tbody>
             <tr>
                 <td>长期项目研发</td>
-                <td id="sl2">{{scorel2}}</td>
-                <td id="test">{{reportForm.scoreL}}</td>
+                <td>{{dept1Score.0}}</td>
+                <td>{{dept2Score.0}}</td>
+                <td>{{dept3Score.0}}</td>
+                <td>{{reportForm.scoreL}}</td>
             </tr>
             <tr>
                 <td>短期研发测试</td>
-                <td id="ss2">{{scores2}}</td>
+                <td>{{dept1Score.1}}</td>
+                <td>{{dept2Score.1}}</td>
+                <td>{{dept3Score.1}}</td>
                 <td>{{reportForm.scoreS}}</td>
             </tr>
             <tr>
                 <td>日常运维支撑</td>
-                <td id="sd2">{{scored2}}</td>
+                <td>{{dept1Score.2}}</td>
+                <td>{{dept2Score.2}}</td>
+                <td>{{dept3Score.2}}</td>
                 <td>{{reportForm.scoreD}}</td>
             </tr>
             <tr>
                 <td>日常行为规范</td>
-                <td id="sr2">{{scorer2}}</td>
+                <td>{{dept1Score.3}}</td>
+                <td>{{dept2Score.3}}</td>
+                <td>{{dept3Score.3}}</td>
                 <td>{{reportForm.scoreR}}</td>
             </tr>
             <tr>
                 <td>总分</td>
-                <td colspan="2" id="totalscore"></td>
+                <td colspan="4" id="totalscore"></td>
             </tr>
             </tbody>
         </table>
@@ -73,12 +84,7 @@
 {%block bodyscriptadd %}
 
 function getSum(){
-        var l2 = parseFloat($('#sl2').text())
-        var s2 = parseFloat($('#ss2').text())
-        var d2 = parseFloat($('#sd2').text())
-        var r2 = parseFloat($('#sr2').text())
-        var sum2 = (l2+s2+d2+r2)*0.5
-
+        var sum2 = parseFloat($('#deptsum').val()) *0.5
         var l3 = parseFloat($('#id_scoreL').val())
         var s3 = parseFloat($('#id_scoreS').val())
         var d3 = parseFloat($('#id_scoreD').val())

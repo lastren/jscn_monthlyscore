@@ -18,6 +18,7 @@ from django.utils.decorators import method_decorator
 import xlwt
 from utils import FitSheetWrapper
 from django.http import HttpResponse
+from decimal import *
 
 # Create your views here.
 # Create your views here.
@@ -265,14 +266,41 @@ def editReport(request,reportid):
                 'note': report.note3,
             })
             context['reportForm'] = reportForm
-            # context['scorel1'] = report.scoreL1
-            # context['scores1'] = report.scoreS1
-            # context['scored1'] = report.scoreD1
-            # context['scorer1'] = report.scoreR1
-            context['scorel2'] = report.scoreL2
-            context['scores2'] = report.scoreS2
-            context['scored2'] = report.scoreD2
-            context['scorer2'] = report.scoreR2
+
+            # context['scorel2'] = report.scoreL2
+            # context['scores2'] = report.scoreS2
+            # context['scored2'] = report.scoreD2
+            # context['scorer2'] = report.scoreR2
+            s1 = (report.author.department, [report.scoreL2, report.scoreS2, report.scoreD2, report.scoreR2])
+            extraReports = report.extraReports.all()
+            if extraReports.count() == 2:
+                s2 = (extraReports[0].leader,
+                      [extraReports[0].scoreL, extraReports[0].scoreS, extraReports[0].scoreD, extraReports[0].scoreR])
+                s3 = (extraReports[1].leader,
+                      [extraReports[1].scoreL, extraReports[1].scoreS, extraReports[1].scoreD, extraReports[1].scoreR])
+                s = (s1, s2, s3)
+                ss = sorted(s, key=lambda x: x[0])
+                context['dept1Score'] = ss[0][1]
+                context['dept2Score'] = ss[1][1]
+                context['dept3Score'] = ss[2][1]
+                deptSum = getDeptSum(report.getSum2(),extraReports[0].getSum(),extraReports[1].getSum())
+                context['deptsum'] = deptSum
+            else:
+                if s1[0] == u'1':
+                    context['dept1Score'] = s1[1]
+                    context['dept2Score'] = ['-', '-', '-', '-']
+                    context['dept3Score'] = ['-', '-', '-', '-']
+                elif s1[0] == u'2':
+                    context['dept1Score'] = ['-', '-', '-', '-']
+                    context['dept2Score'] = s1[1]
+                    context['dept3Score'] = ['-', '-', '-', '-']
+                else:
+                    context['dept1Score'] = ['-', '-', '-', '-']
+                    context['dept2Score'] = ['-', '-', '-', '-']
+                    context['dept3Score'] = s1[1]
+
+                context['deptsum'] = report.getSum2()
+
             context['author'] = report.author
             context['department'] = report.author.get_department_display()
 
@@ -314,18 +342,33 @@ def editReport(request,reportid):
             context['author'] = report.author
             return render(request, 'editReportle.html', context)
         if immanager:
-            # context['scorel1'] = report.scoreL1
-            # context['scores1'] = report.scoreS1
-            # context['scored1'] = report.scoreD1
-            # context['scorer1'] = report.scoreR1
-            context['scorel2'] = report.scoreL2
-            context['scores2'] = report.scoreS2
-            context['scored2'] = report.scoreD2
-            context['scorer2'] = report.scoreR2
-            # context['scorel3'] = report.scoreL3
-            # context['scores3'] = report.scoreS3
-            # context['scored3'] = report.scoreD3
-            # context['scorer3'] = report.scoreR3
+            s1 = (report.author.department, [report.scoreL2,report.scoreS2,report.scoreD2,report.scoreR2])
+            extraReports = report.extraReports.all()
+            if extraReports.count() == 2:
+                s2 = (extraReports[0].leader, [extraReports[0].scoreL,extraReports[0].scoreS,extraReports[0].scoreD,extraReports[0].scoreR])
+                s3 = (extraReports[1].leader, [extraReports[1].scoreL,extraReports[1].scoreS,extraReports[1].scoreD,extraReports[1].scoreR])
+                s = (s1, s2, s3)
+                ss = sorted(s, key=lambda x: x[0])
+                context['dept1Score'] = ss[0][1]
+                context['dept2Score'] = ss[1][1]
+                context['dept3Score'] = ss[2][1]
+            else:
+                if s1[0] == u'1':
+                    context['dept1Score'] = s1[1]
+                    context['dept2Score'] = ['-', '-', '-', '-']
+                    context['dept3Score'] = ['-', '-', '-', '-']
+                elif s1[0] == u'2':
+                    context['dept1Score'] = ['-', '-', '-', '-']
+                    context['dept2Score'] = s1[1]
+                    context['dept3Score'] = ['-', '-', '-', '-']
+                else:
+                    context['dept1Score'] = ['-', '-', '-', '-']
+                    context['dept2Score'] = ['-', '-', '-', '-']
+                    context['dept3Score'] = s1[1]
+            # context['scorel2'] = report.scoreL2
+            # context['scores2'] = report.scoreS2
+            # context['scored2'] = report.scoreD2
+            # context['scorer2'] = report.scoreR2
             context['author'] = report.author
             context['department'] = report.author.get_department_display()
 
@@ -335,15 +378,40 @@ def editReport(request,reportid):
 
             return render(request, 'editReportmr.html', context)
     elif report.status == Report.STATUS_ARCHIVED:
-        context['scorel2'] = report.scoreL2
-        context['scores2'] = report.scoreS2
-        context['scored2'] = report.scoreD2
-        context['scorer2'] = report.scoreR2
+        s1 = (report.author.department, [report.scoreL2, report.scoreS2, report.scoreD2, report.scoreR2])
+        extraReports = report.extraReports.all()
+        if extraReports.count() == 2:
+            s2 = (extraReports[0].leader,
+                  [extraReports[0].scoreL, extraReports[0].scoreS, extraReports[0].scoreD, extraReports[0].scoreR])
+            s3 = (extraReports[1].leader,
+                  [extraReports[1].scoreL, extraReports[1].scoreS, extraReports[1].scoreD, extraReports[1].scoreR])
+            s = (s1, s2, s3)
+            ss = sorted(s, key=lambda x: x[0])
+            context['dept1Score'] = ss[0][1]
+            context['dept2Score'] = ss[1][1]
+            context['dept3Score'] = ss[2][1]
+            deptSum = getDeptSum(report.getSum2(), extraReports[0].getSum(), extraReports[1].getSum())
+            context['sum'] = getTotalSum(deptSum,report.getSum3())
+        else:
+            if s1[0] == u'1':
+                context['dept1Score'] = s1[1]
+                context['dept2Score'] = ['-', '-', '-', '-']
+                context['dept3Score'] = ['-', '-', '-', '-']
+            elif s1[0] == u'2':
+                context['dept1Score'] = ['-', '-', '-', '-']
+                context['dept2Score'] = s1[1]
+                context['dept3Score'] = ['-', '-', '-', '-']
+            else:
+                context['dept1Score'] = ['-', '-', '-', '-']
+                context['dept2Score'] = ['-', '-', '-', '-']
+                context['dept3Score'] = s1[1]
+
+            context['sum'] = report.getSumAll()
+
         context['scorel3'] = report.scoreL3
         context['scores3'] = report.scoreS3
         context['scored3'] = report.scoreD3
         context['scorer3'] = report.scoreR3
-        context['sum'] = report.getSumAll()
         context['author'] = report.author
         context['department'] = report.author.get_department_display()
 
@@ -431,7 +499,7 @@ def saveReport(request,type):
                             for xr in extraReports:
                                 if xr.status == ExtraReport.STATUS_SUBMITTOMANAGER:
                                     n += 1
-                            if n==2:
+                            if n == 2:
                                 report.status = Report.STATUS_SUBMITTOMANAGER_DONE
                                 report.save()
                         elif type == Report.STATUS_RETURNBYLEADER:
@@ -560,6 +628,39 @@ class ReportList(ListView):
                 if type in [Report.STATUS_SUBMITTOMANAGER_DONE,Report.STATUS_MANAGERCHECK,Report.STATUS_RETURNBYMANAGER]:
                     reports = Report.objects.filter(author__department=dept
                                                     ).filter(status=type)
+
+                    for r in reports:
+                        s1 = (r.author.department, r.getSum2())
+                        extraReports = r.extraReports.all()
+                        if extraReports.count() == 2:
+                            s2 = (extraReports[0].leader, extraReports[0].getSum())
+                            s3 = (extraReports[1].leader, extraReports[1].getSum())
+                            s = (s1, s2, s3)
+                            ss = sorted(s, key=lambda x: x[0])
+                            r.dept1Sum = ss[0][1]
+                            r.dept2Sum = ss[1][1]
+                            r.dept3Sum = ss[2][1]
+                            #deptSum = s1[1]*Decimal.from_float(0.5) + s2[1]*Decimal.from_float(0.25) + s3[1]*Decimal.from_float(0.25)
+                            # r.sum = deptSum * Decimal.from_float(0.5) + r.getSum3()* Decimal.from_float(0.5)
+                            # r.sum = round(r.sum,2)
+                            deptSum = getDeptSum(s1[1], s2[1], s3[1])
+                            r.sum = getTotalSum(deptSum,r.getSum3())
+                        else:
+                            if s1[0] == u'1':
+                                r.dept1Sum = s1[1]
+                                r.dept2Sum = '-'
+                                r.dept3Sum = '-'
+                            elif s1[0] == u'2':
+                                r.dept1Sum = '-'
+                                r.dept2Sum = s1[1]
+                                r.dept3Sum = '-'
+                            else:
+                                r.dept1Sum = '-'
+                                r.dept2Sum = '-'
+                                r.dept3Sum = s1[1]
+
+                            r.sum = r.getSumAll()
+
                     self.template_name = 'reportListm.html'
                     return reports
                 else:
@@ -592,6 +693,14 @@ class ReportList(ListView):
 
         return context
 
+#ss is my dept's score
+def getDeptSum(ss,s2,s3):
+    return ss*Decimal.from_float(0.5) + s2*Decimal.from_float(0.25) + s3*Decimal.from_float(0.25)
+
+#ds is depts' total, ms is manager's score,return round 2
+def getTotalSum(ds,ms):
+    s = ds * Decimal.from_float(0.5) + ms * Decimal.from_float(0.5)
+    return round(s,2)
 
 @login_required
 def getExtraReports(request,type,dept):
@@ -806,6 +915,36 @@ def ajaxgetreports(request):
     dt = datetime.datetime.strptime(month, "%Y-%m")
     date = datetime.date(dt.year,dt.month,1)
     reports = Report.objects.filter(status=Report.STATUS_ARCHIVED).filter(month=date)
+
+    for r in reports:
+        s1 = (r.author.department, r.getSum2())
+        extraReports = r.extraReports.all()
+        if extraReports.count() == 2:
+            s2 = (extraReports[0].leader, extraReports[0].getSum())
+            s3 = (extraReports[1].leader, extraReports[1].getSum())
+            s = (s1, s2, s3)
+            ss = sorted(s, key=lambda x: x[0])
+            r.dept1Sum = ss[0][1]
+            r.dept2Sum = ss[1][1]
+            r.dept3Sum = ss[2][1]
+            deptSum = getDeptSum(s1[1], s2[1], s3[1])
+            r.sum = getTotalSum(deptSum, r.getSum3())
+        else:
+            if s1[0] == u'1':
+                r.dept1Sum = s1[1]
+                r.dept2Sum = '-'
+                r.dept3Sum = '-'
+            elif s1[0] == u'2':
+                r.dept1Sum = '-'
+                r.dept2Sum = s1[1]
+                r.dept3Sum = '-'
+            else:
+                r.dept1Sum = '-'
+                r.dept2Sum = '-'
+                r.dept3Sum = s1[1]
+
+            r.sum = r.getSumAll()
+
     return render(request, template_name,{'report_list':reports})
 
 
@@ -818,7 +957,7 @@ def toexcel(request):
         date = datetime.date(dt.year, dt.month, 1)
         reports = Report.objects.filter(status=Report.STATUS_ARCHIVED).filter(month=date)
 
-        titles = (u'科室',u'姓名',u'科室评分',u'部门评分',u'总分',)
+        titles = (u'科室',u'姓名',u'技术开发科评分',u'IT支撑科评分',u'规划发展科评分',u'部门评分',u'总分',)
         file = xlwt.Workbook(encoding='utf8')
         #table = FitSheetWrapper.FitSheetWrapper(file.add_sheet('sheet1'))
         table = file.add_sheet('sheet1')
@@ -826,11 +965,41 @@ def toexcel(request):
             table.write(0, i, e)
         row = 1
         for report in reports:
+            s1 = (report.author.department, report.getSum2())
+            extraReports = report.extraReports.all()
+            if extraReports.count() == 2:
+                s2 = (extraReports[0].leader, extraReports[0].getSum())
+                s3 = (extraReports[1].leader, extraReports[1].getSum())
+                s = (s1, s2, s3)
+                ss = sorted(s, key=lambda x: x[0])
+                report.dept1Sum = ss[0][1]
+                report.dept2Sum = ss[1][1]
+                report.dept3Sum = ss[2][1]
+                deptSum = getDeptSum(s1[1], s2[1], s3[1])
+                report.sum = getTotalSum(deptSum, report.getSum3())
+            else:
+                if s1[0] == u'1':
+                    report.dept1Sum = s1[1]
+                    report.dept2Sum = '-'
+                    report.dept3Sum = '-'
+                elif s1[0] == u'2':
+                    report.dept1Sum = '-'
+                    report.dept2Sum = s1[1]
+                    report.dept3Sum = '-'
+                else:
+                    report.dept1Sum = '-'
+                    report.dept2Sum = '-'
+                    report.dept3Sum = s1[1]
+
+                report.sum = report.getSumAll()
+
             table.write(row,0,report.author.get_department_display())
             table.write(row,1,report.author.displayName)
-            table.write(row,2,toStr(report.getSum2()))
-            table.write(row,3,toStr(report.getSum3()))
-            table.write(row,4,toStr(report.getSumAll()))
+            table.write(row,2,toStr(report.dept1Sum))
+            table.write(row,3, toStr(report.dept2Sum))
+            table.write(row,4, toStr(report.dept3Sum))
+            table.write(row,5,toStr(report.getSum3()))
+            table.write(row,6,toStr(report.sum))
             row = row+1
 
         response = HttpResponse(content_type='application/vnd.ms-excel')

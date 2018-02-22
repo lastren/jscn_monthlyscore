@@ -22,7 +22,7 @@ class Report(models.Model):
         (STATUS_INITIAL, u'未提交'),
         (STATUS_SUBMITTOLEADER, u'已提交科室'),
         (STATUS_LEADERCHECK, u'科室审核中'),
-        (STATUS_SUBMITTOMANAGER_WAIT, u'已提交部门.'),
+        (STATUS_SUBMITTOMANAGER_WAIT, u'已提交部门'),
         (STATUS_MANAGERCHECK, u'部门审核中'),
         (STATUS_ARCHIVED, u'已存档'),
         (STATUS_RETURNBYLEADER, u'退回员工'),
@@ -85,6 +85,19 @@ class Report(models.Model):
 
     def getSumAll(self):
         return self.getSum2() * Decimal.from_float(0.5)+self.getSum3()*Decimal.from_float(0.5)
+
+    # def getDeptSum(self):
+    #     s1 = (self.author.department,self.getSum2())
+    #     extraReports = self.extraReports.all()
+    #     if extraReports.count()==2:
+    #         s2 = (extraReports[0].leader,extraReports[0].getSum())
+    #         s3 = (extraReports[1].leader, extraReports[1].getSum())
+    #         s = (s1,s2,s3)
+    #         sorted(s,key=lambda x:x[0])
+    #         return s[0][1],s[1][1],s[2][1]
+    #     else:
+    #         return None
+
 
 
 class Task(models.Model):
